@@ -18,6 +18,23 @@ async function openFreshDemo(page: import('@playwright/test').Page): Promise<voi
   await expect(page.getByRole('heading', { name: 'Mercer kitchen fit' })).toBeVisible();
 }
 
+function parseCsv(csv: string): string[][] {
+  return csv.trimEnd().split('\r\n').map((line) => {
+    const cells: string[] = [];
+    let cell = '';
+    let quoted = false;
+    for (let index = 0; index < line.length; index += 1) {
+      const character = line[index]!;
+      if (character === '"' && quoted && line[index + 1] === '"') { cell += '"'; index += 1; }
+      else if (character === '"') quoted = !quoted;
+      else if (character === ',' && !quoted) { cells.push(cell); cell = ''; }
+      else cell += character;
+    }
+    cells.push(cell);
+    return cells;
+  });
+}
+
 test.beforeEach(async ({ page, context }) => {
   await context.clearCookies();
   await clearBrowserState(page);
@@ -97,7 +114,7 @@ test('@claim:client-update sample late finish produces a ready-to-copy client up
   await expect(page.getByText('Client update copied.')).toBeVisible();
 });
 
-test('@claim:csv-export CSV contains every sample step and calendar settings', async ({ page }) => {
+test('@claim:csv-export CSV contains every sample step, forecast, actual finish, and calendar setting', async ({ page }) => {
   await openFreshDemo(page);
   await page.getByRole('button', { name: 'Open data settings' }).first().click();
   const downloadPromise = page.waitForEvent('download');
@@ -105,14 +122,18 @@ test('@claim:csv-export CSV contains every sample step and calendar settings', a
   const download = await downloadPromise;
   const stream = await download.createReadStream();
   let csv = ''; for await (const chunk of stream) csv += chunk.toString();
-  expect(csv.split('\r\n')).toHaveLength(4);
-  expect(csv).toContain('"forecast_start"');
-  expect(csv).toContain('"Mercer kitchen fit"');
-  expect(csv).toContain('"Europe/London"');
-  expect(csv).toContain('"2026-09-15"');
+  const rows = parseCsv(csv);
+  const header = ['job', 'client', 'status', 'step_order', 'step', 'duration_workdays', 'baseline_start', 'baseline_finish', 'forecast_start', 'forecast_finish', 'actual_finish', 'timezone', 'working_days', 'holidays'];
+  expect(rows).toHaveLength(4);
+  expect(rows[0]).toEqual(header);
+  expect(rows.slice(1)).toEqual([
+    ['Mercer kitchen fit', 'Rina Mercer', 'active', '1', 'Strip out', '2', '2026-09-07', '2026-09-08', '2026-09-07', '2026-09-08', '2026-09-08', 'Europe/London', 'Mon|Tue|Wed|Thu|Fri', '2026-09-15'],
+    ['Mercer kitchen fit', 'Rina Mercer', 'active', '2', 'Rough-in', '2', '2026-09-09', '2026-09-10', '2026-09-09', '2026-09-14', '2026-09-14', 'Europe/London', 'Mon|Tue|Wed|Thu|Fri', '2026-09-15'],
+    ['Mercer kitchen fit', 'Rina Mercer', 'active', '3', 'Fit and handover', '2', '2026-09-11', '2026-09-14', '2026-09-16', '2026-09-17', '', 'Europe/London', 'Mon|Tue|Wed|Thu|Fri', '2026-09-15']
+  ]);
 });
 
-test('@claim:json-backup JSON exports and restores the complete sample job', async ({ page }) => {
+test('@claim:json-backup JSON exports and restores every sample job field and calendar setting', async ({ page }) => {
   await openFreshDemo(page);
   await page.getByRole('button', { name: 'Open data settings' }).first().click();
   const downloadPromise = page.waitForEvent('download');
@@ -120,15 +141,36 @@ test('@claim:json-backup JSON exports and restores the complete sample job', asy
   const download = await downloadPromise;
   const path = await download.path();
   expect(path).toBeTruthy();
+  const stream = await download.createReadStream();
+  let json = ''; for await (const chunk of stream) json += chunk.toString();
+  const backup = JSON.parse(json) as { version: number; settings: unknown; jobs: unknown; selectedJobId: string };
   await page.getByRole('button', { name: 'Close dialog' }).click();
   await page.getByRole('button', { name: 'Edit job' }).click();
   await page.getByLabel('Job name').fill('Temporary name');
+  await page.getByLabel('Client name').fill('Temporary client');
+  await page.getByLabel('First forecast start').fill('2026-10-01');
   await page.getByRole('button', { name: 'Save job' }).click();
+  await page.getByRole('button', { name: 'Open data settings' }).first().click();
+  await page.getByLabel('Timezone').fill('America/Chicago');
+  await page.locator('input[name="workday"][value="5"]').uncheck();
+  await page.getByLabel('Non-working dates').fill('2026-10-02\n2026-10-05');
+  await page.getByRole('button', { name: 'Save working calendar' }).click();
   await page.getByRole('button', { name: 'Open data settings' }).first().click();
   page.once('dialog', (dialog) => dialog.accept());
   await page.getByLabel('Import JSON').setInputFiles(path!);
   await expect(page.getByRole('heading', { name: 'Mercer kitchen fit' })).toBeVisible();
   await expect(page.locator('[data-step-id="demo-handover"]')).toContainText('Sep 17, 2026');
+  const restored = await page.evaluate(async () => new Promise<unknown>((resolve, reject) => {
+    const request = indexedDB.open('demo:actuals-job-sequencer');
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => {
+      const transaction = request.result.transaction('app', 'readonly');
+      const get = transaction.objectStore('app').get('current');
+      get.onsuccess = () => resolve(get.result);
+      get.onerror = () => reject(get.error);
+    };
+  }));
+  expect(restored).toMatchObject({ version: backup.version, settings: backup.settings, jobs: backup.jobs, selectedJobId: backup.selectedJobId });
 });
 
 test('@claim:local-only editing the sample sends no job data off origin', async ({ page }) => {
@@ -188,6 +230,43 @@ test('@claim:five-job-limit five active jobs and exports work without an account
   await page.getByRole('button', { name: 'Close dialog' }).click();
   await page.getByRole('button', { name: 'Add a job' }).click();
   await expect(page.getByText('Five active jobs is the limit. Archive one to add another.')).toBeVisible();
+});
+
+test('@claim:archive-restore archived jobs free a slot and restore with their steps', async ({ page }) => {
+  await openFreshDemo(page);
+  await page.getByRole('button', { name: 'Start for real' }).click();
+  for (let index = 1; index <= 5; index += 1) {
+    await page.getByRole('button', { name: index === 1 ? 'Start your first job' : 'Add a job' }).first().click();
+    await page.getByLabel('Job name').fill(`Job ${index}`);
+    await page.getByLabel('First forecast start').fill('2026-09-03');
+    await page.getByRole('button', { name: 'Create job' }).click();
+  }
+  await page.getByRole('button', { name: 'Add next step' }).click();
+  await page.getByLabel('Step name').fill('Keep this step');
+  await page.getByRole('button', { name: 'Add step' }).click();
+  await page.getByRole('button', { name: 'Archive job' }).click();
+  await expect(page.getByRole('button', { name: 'Show archived jobs' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByRole('button', { name: 'Job 5' })).toBeVisible();
+  await page.getByRole('button', { name: 'Add a job' }).click();
+  await page.getByLabel('Job name').fill('Replacement job');
+  await page.getByLabel('First forecast start').fill('2026-09-03');
+  await page.getByRole('button', { name: 'Create job' }).click();
+  await page.getByRole('button', { name: 'Archive job' }).click();
+  await page.getByRole('button', { name: 'Job 5' }).click();
+  await page.getByRole('button', { name: 'Restore job' }).click();
+  await expect(page.getByRole('heading', { name: 'Job 5' })).toBeVisible();
+  await expect(page.getByText('Keep this step', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Show active jobs' })).toHaveAttribute('aria-pressed', 'true');
+});
+
+test('first screen uses forecast-date language and clear job-list filter verbs', async ({ page }) => {
+  await page.goto('/');
+  await expect(page).toHaveTitle('Actuals Job Sequencer — move forecast dates');
+  await expect(page.getByRole('heading', { name: 'Move forecast dates after actual finishes' })).toBeVisible();
+  await expect(page.getByText('Forecast dates · built for small trade crews')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Show active jobs' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Show archived jobs' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Track up to five active jobs' })).toBeVisible();
 });
 
 test('routes set metadata, restore focus, and provide a designed not-found page', async ({ page }) => {

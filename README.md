@@ -4,7 +4,7 @@ Move forecast dates after actual finishes for solo and two-person trade crews. T
 
 Live product: <https://actuals-job-sequencer.sociobot.in>
 
-Try the isolated sample: <https://actuals-job-sequencer.sociobot.in/demo/>
+Try the sample without changing your jobs: <https://actuals-job-sequencer.sociobot.in/demo/>
 
 ## What it does
 
@@ -14,6 +14,7 @@ Try the isolated sample: <https://actuals-job-sequencer.sociobot.in/demo/>
 - Writes a client update with the changed forecast dates.
 - Exports every job and calendar setting as JSON or CSV.
 - Restores jobs and settings from a valid JSON backup.
+- Archives a finished job to free a slot, then restores it with its steps.
 - Works offline after the first visit.
 - Keeps job and client data in this browser.
 
@@ -23,7 +24,7 @@ It does not plan routes, payroll, GPS, or whole projects. Forecast dates are est
 
 Open `/demo/` or `/?demo=1`. The sample kitchen job already shows a late rough-in and a moved handover date.
 
-The demo uses the separate `demo:actuals-job-sequencer` browser database. Reset demo restores the sample. Start for real deletes the demo database and returns to your real jobs.
+Demo changes stay separate from your jobs. Reset demo restores the sample. Start for real removes the sample and returns to your jobs.
 
 ## Run locally
 
@@ -62,7 +63,7 @@ See [Privacy](https://actuals-job-sequencer.sociobot.in/privacy/) and [Terms](ht
 
 ## Deploy
 
-Build `dist/`, then deploy it as a static site. `staticwebapp.config.json` sets immutable asset caching, security headers, route behavior, and the real 404 response.
+Build `dist/`, then deploy it as a static site. `staticwebapp.config.json` caches versioned files for a year, adds browser security rules, and sends unknown URLs to the 404 page.
 
 ## Product records
 

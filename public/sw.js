@@ -1,4 +1,4 @@
-const VERSION = 'actuals-v2';
+const VERSION = 'actuals-v3';
 const SHELL = `${VERSION}-shell`;
 const RUNTIME = `${VERSION}-runtime`;
 const CORE = ['/', '/index.html', '/demo/', '/demo/index.html', '/privacy/', '/privacy/index.html', '/terms/', '/terms/index.html', '/404/', '/404/index.html', '/offline.html', '/manifest.webmanifest', '/icon.svg', '/icon-192.png', '/icon-512.png', '/icon-maskable-512.png', '/apple-touch-icon.png', '/og-image.webp', '/assets/dependency-still-life-720.webp', '/assets/dependency-still-life-1200.webp'];

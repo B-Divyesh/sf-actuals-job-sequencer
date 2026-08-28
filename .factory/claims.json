@@ -54,5 +54,12 @@
     "where": "first screen, job list, data settings, README",
     "test": "npm run test:e2e -- --grep @claim:five-job-limit",
     "sandbox": "enter through /demo/, return to clean real mode, assert no purchase link, create five active jobs, export CSV, then assert a sixth job is rejected"
+  },
+  {
+    "id": "archive-restore",
+    "claim": "Archive a finished job to free a slot, then restore it with its steps intact.",
+    "where": "five-job section, job actions, README",
+    "test": "npm run test:e2e -- --grep @claim:archive-restore",
+    "sandbox": "fresh /demo/ entry, clean real mode; create five jobs, add a step to the fifth, archive it, create and archive a replacement, then restore the fifth job and assert its step remains"
   }
 ]
