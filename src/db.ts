@@ -1,12 +1,13 @@
 import type { AppData } from './types';
 
-const DB_NAME = 'actuals-job-sequencer';
+const REAL_DB_NAME = 'actuals-job-sequencer';
+const DEMO_DB_NAME = 'demo:actuals-job-sequencer';
 const STORE = 'app';
 const KEY = 'current';
 
-function openDatabase(): Promise<IDBDatabase> {
+function openDatabase(demo: boolean): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, 1);
+    const request = indexedDB.open(demo ? DEMO_DB_NAME : REAL_DB_NAME, 1);
     request.onupgradeneeded = () => {
       if (!request.result.objectStoreNames.contains(STORE)) request.result.createObjectStore(STORE);
     };
@@ -15,8 +16,8 @@ function openDatabase(): Promise<IDBDatabase> {
   });
 }
 
-export async function loadData(): Promise<AppData | undefined> {
-  const db = await openDatabase();
+export async function loadData(demo = false): Promise<AppData | undefined> {
+  const db = await openDatabase(demo);
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(STORE, 'readonly');
     const request = transaction.objectStore(STORE).get(KEY);
@@ -26,12 +27,21 @@ export async function loadData(): Promise<AppData | undefined> {
   });
 }
 
-export async function saveData(data: AppData): Promise<void> {
-  const db = await openDatabase();
+export async function saveData(data: AppData, demo = false): Promise<void> {
+  const db = await openDatabase(demo);
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(STORE, 'readwrite');
     transaction.objectStore(STORE).put(data, KEY);
     transaction.oncomplete = () => { db.close(); resolve(); };
     transaction.onerror = () => { db.close(); reject(transaction.error ?? new Error('Could not save local data.')); };
+  });
+}
+
+export function deleteDemoData(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.deleteDatabase(DEMO_DB_NAME);
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error ?? new Error('Could not reset sample data.'));
+    request.onblocked = () => reject(new Error('Close other demo tabs, then reset again.'));
   });
 }

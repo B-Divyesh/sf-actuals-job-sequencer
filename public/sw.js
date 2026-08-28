@@ -1,7 +1,7 @@
-const VERSION = 'actuals-v1';
+const VERSION = 'actuals-v2';
 const SHELL = `${VERSION}-shell`;
 const RUNTIME = `${VERSION}-runtime`;
-const CORE = ['/', '/index.html', '/offline.html', '/manifest.webmanifest', '/icon.svg', '/icon-192.png', '/icon-512.png', '/icon-maskable-512.png', '/assets/dependency-still-life-720.webp', '/assets/dependency-still-life-1200.webp', '/privacy/', '/terms/'];
+const CORE = ['/', '/index.html', '/demo/', '/demo/index.html', '/privacy/', '/privacy/index.html', '/terms/', '/terms/index.html', '/404/', '/404/index.html', '/offline.html', '/manifest.webmanifest', '/icon.svg', '/icon-192.png', '/icon-512.png', '/icon-maskable-512.png', '/apple-touch-icon.png', '/og-image.webp', '/assets/dependency-still-life-720.webp', '/assets/dependency-still-life-1200.webp'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
@@ -42,7 +42,10 @@ self.addEventListener('fetch', (event) => {
         (await caches.open(RUNTIME)).put(request, fresh.clone());
         return fresh;
       } catch (_) {
-        return (await caches.match(request)) || (await caches.match('/index.html')) || (await caches.match('/offline.html'));
+        const known = ['/', '/demo', '/demo/', '/privacy', '/privacy/', '/terms', '/terms/', '/404', '/404/'];
+        if (!known.includes(url.pathname)) return (await caches.match('/404/index.html')) || (await caches.match('/offline.html'));
+        const fallback = url.pathname.startsWith('/demo') ? '/demo/index.html' : url.pathname.startsWith('/privacy') ? '/privacy/index.html' : url.pathname.startsWith('/terms') ? '/terms/index.html' : '/index.html';
+        return (await caches.match(request)) || (await caches.match(fallback)) || (await caches.match('/offline.html'));
       }
     })());
     return;

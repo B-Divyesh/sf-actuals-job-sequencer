@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { addWorkingDays, isIsoDate, nextWorkingDay, rollToWorkingDay, scheduleJob } from '../src/schedule';
+import { actualOrderError, addWorkingDays, isIsoDate, nextWorkingDay, rollToWorkingDay, scheduleJob } from '../src/schedule';
 import type { Job, ScheduleSettings } from '../src/types';
 
 const settings: ScheduleSettings = { timezone: 'Europe/London', workdays: [1, 2, 3, 4, 5], holidays: ['2026-09-07'] };
@@ -75,5 +75,11 @@ describe('seeded finish-to-start sequences', () => {
     expect(result[0]?.startMoved).toBe(false);
     expect(result[1]?.startMoved).toBe(true);
     expect(result[2]?.finishMoved).toBe(true);
+  });
+
+  it('rejects an actual finish before an earlier dependency finished', () => {
+    const impossible = job(['2026-09-09', '2026-09-03']);
+    expect(actualOrderError(impossible)).toContain('Rough-in cannot finish');
+    expect(() => scheduleJob(impossible, settings)).toThrow('Strip out finished');
   });
 });

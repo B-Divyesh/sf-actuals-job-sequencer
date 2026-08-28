@@ -51,7 +51,21 @@ export function nextWorkingDay(value: string, settings: ScheduleSettings): strin
   return rollToWorkingDay(toIso(date), settings);
 }
 
+export function actualOrderError(job: Job): string | undefined {
+  let previous: { name: string; actual: string } | undefined;
+  for (const step of job.steps) {
+    if (!step.actualFinish) continue;
+    if (previous && step.actualFinish < previous.actual) {
+      return `${step.name} cannot finish on ${formatDate(step.actualFinish, 'long')} because ${previous.name} finished on ${formatDate(previous.actual, 'long')}. Enter a date on or after ${formatDate(previous.actual, 'long')}.`;
+    }
+    previous = { name: step.name, actual: step.actualFinish };
+  }
+  return undefined;
+}
+
 export function scheduleJob(job: Job, settings: ScheduleSettings): ScheduledStep[] {
+  const orderError = actualOrderError(job);
+  if (orderError) throw new Error(orderError);
   let baselineCursor = rollToWorkingDay(job.startDate, settings);
   let forecastCursor = baselineCursor;
 

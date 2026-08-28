@@ -61,4 +61,4 @@ The only illustrative raster is an original editorial still life used in the fir
 - Palette words: warm ivory paper, charcoal black, one restrained brick-red registration mark.
 - Negative list: people, hands, readable text, letters, numbers, logos, brands, watermarks, gradients, glossy 3D, app screenshot, blueprint cyan.
 - Generation: Azure OpenAI image model (`factory-image`) through `/opt/fleet/lib/gen-image.sh`, generated 2026-08-28. Original generated asset; licensed for this product. Source PNG and exact prompt sidecar are kept in `assets/src/`; shipped WebP is optimized to ≤300 KB.
-
+- Social preview: `public/og-image.webp` is a 1200×630 crop of the same reviewed original. The Apple touch icon and favicon are resized from the hand-authored product mark.
