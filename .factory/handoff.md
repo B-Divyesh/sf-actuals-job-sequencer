@@ -1,5 +1,17 @@
 # Build handoff — Actuals Job Sequencer
 
+## Review 1 handoff — FAIL (2026-08-28 UTC)
+
+An adversarial first-read review was completed without product-code changes. The committed report is [.factory/review-1.md](review-1.md).
+
+- The live product has no required isolated sample-data demo; `/demo` and `/?demo=1` render the normal empty app.
+- `.factory/claims.json` and all tagged claim tests are absent, despite many privacy, offline, scheduling, export, and price claims.
+- The primary dependency calculation still accepts an actual finish before a completed prerequisite and writes an impossible downstream client forecast (earlier P1 reproduced live).
+- Hashed live assets still use `Cache-Control: public, must-revalidate, max-age=30` (earlier P2 not fixed).
+- The phone first viewport does not identify the job/audience or show a sample action; demo/404 routes and share/canonical metadata are incomplete.
+
+Fresh-clone `npm ci`, `npm test` (10/10), `npm run build`, and `npm run test:e2e` (4/4) passed. A live service-worker offline reload and same-origin network-interception smoke check passed, but cannot validate unregistered claims or a missing demo sandbox. Next work must address every finding in `review-1.md`, then repeat the complete review on the deployed URL.
+
 ## Independent verification status — FAIL (2026-08-28 UTC)
 
 Candidate `da6a3618e6bcee4e937dea03ef3d3a936f9128ba` was independently verified against <https://actuals-job-sequencer.sociobot.in>. **Do not release this candidate.** See [.factory/verification.md](verification.md) for complete commands and evidence.
