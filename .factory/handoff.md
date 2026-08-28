@@ -1,5 +1,14 @@
 # Build handoff — Actuals Job Sequencer
 
+## Independent verification status — FAIL (2026-08-28 UTC)
+
+Candidate `da6a3618e6bcee4e937dea03ef3d3a936f9128ba` was independently verified against <https://actuals-job-sequencer.sociobot.in>. **Do not release this candidate.** See [.factory/verification.md](verification.md) for complete commands and evidence.
+
+- **P1:** The UI accepts an actual finish for a dependent step that predates a prior step's actual finish. It then generates a downstream/client forecast before that prerequisite completed. Repro: ordered one-day steps starting 2026-09-03; record step 1 actual 2026-09-09, then step 2 actual 2026-09-03; step 3/client message promises 2026-09-04. Reject or repair contradictory actuals before recalculation/message generation.
+- **P2:** Live hashed assets use `Cache-Control: public, must-revalidate, max-age=30`, not long-lived immutable caching required for this PWA. This is a deployment configuration follow-up.
+
+All local quality gates, independent axe/mobile/keyboard/offline/update checks, bundle budget, and live byte parity otherwise passed. No product code was changed by the verifier.
+
 ## Shipped
 
 - Production Vite + TypeScript offline PWA in `dist/`.
