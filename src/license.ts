@@ -8,6 +8,7 @@ export interface LicenseState {
 interface CachedVerdict {
   valid: boolean;
   checkedAt: number;
+  token: string;
 }
 
 const SLUG = 'actuals-job-sequencer';
@@ -18,7 +19,7 @@ const BILLING_BASE = import.meta.env.VITE_BILLING_BASE_URL || 'https://api.socio
 function readVerdict(): CachedVerdict | undefined {
   try {
     const parsed = JSON.parse(localStorage.getItem(VERDICT_KEY) || 'null') as CachedVerdict | null;
-    return parsed && typeof parsed.valid === 'boolean' && typeof parsed.checkedAt === 'number' ? parsed : undefined;
+    return parsed && typeof parsed.valid === 'boolean' && typeof parsed.checkedAt === 'number' && typeof parsed.token === 'string' ? parsed : undefined;
   } catch { return undefined; }
 }
 
@@ -31,6 +32,7 @@ export function initialLicense(): LicenseState {
   const incoming = url.searchParams.get('license')?.trim();
   if (incoming) {
     localStorage.setItem(TOKEN_KEY, incoming);
+    localStorage.removeItem(VERDICT_KEY);
     url.searchParams.delete('license');
     history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
   }
@@ -38,7 +40,7 @@ export function initialLicense(): LicenseState {
   const cached = readVerdict();
   return {
     token,
-    unlocked: Boolean(token && cached?.valid),
+    unlocked: Boolean(token && cached?.token === token && cached.valid),
     checking: Boolean(token),
     notice: ''
   };
@@ -48,7 +50,7 @@ export async function verifyLicense(state: LicenseState, force = false): Promise
   if (!state.token || !navigator.onLine) return { ...state, checking: false };
   const cached = readVerdict();
   const oneDay = 24 * 60 * 60 * 1000;
-  if (!force && cached && Date.now() - cached.checkedAt < oneDay) {
+  if (!force && cached?.token === state.token && Date.now() - cached.checkedAt < oneDay) {
     return { ...state, unlocked: cached.valid, checking: false };
   }
   try {
@@ -59,7 +61,7 @@ export async function verifyLicense(state: LicenseState, force = false): Promise
     if (!response.ok) throw new Error('Verification service unavailable.');
     const result = await response.json() as { valid?: boolean; reason?: string };
     const valid = result.valid === true;
-    localStorage.setItem(VERDICT_KEY, JSON.stringify({ valid, checkedAt: Date.now() }));
+    localStorage.setItem(VERDICT_KEY, JSON.stringify({ valid, checkedAt: Date.now(), token: state.token }));
     return {
       ...state,
       unlocked: valid,

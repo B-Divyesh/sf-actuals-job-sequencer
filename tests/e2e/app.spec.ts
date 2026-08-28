@@ -36,9 +36,15 @@ test('creates a job, reflows dates from an actual, and drafts a client update', 
   await expect(page.getByText('MOVED', { exact: true })).toBeVisible();
   await expect(page.locator('#client-message')).toContainText('Rough-in');
   await expect(page.locator('#client-message')).toContainText('Current estimated job finish');
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Patel kitchen' })).toBeVisible();
 });
 
 test('has no serious accessibility violations on empty and populated states', async ({ page }) => {
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('link', { name: 'Skip to schedule' })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#main')).toBeFocused();
   const emptyResults = await new AxeBuilder({ page }).analyze();
   expect(emptyResults.violations.filter((item) => ['serious', 'critical'].includes(item.impact || ''))).toEqual([]);
 
@@ -48,6 +54,16 @@ test('has no serious accessibility violations on empty and populated states', as
   await page.getByRole('button', { name: 'Create job' }).click();
   const results = await new AxeBuilder({ page }).analyze();
   expect(results.violations.filter((item) => ['serious', 'critical'].includes(item.impact || ''))).toEqual([]);
+});
+
+test('publishes accessible privacy and terms pages', async ({ page }) => {
+  for (const route of ['/privacy/', '/terms/']) {
+    await page.goto(route);
+    await expect(page.locator('main')).toBeVisible();
+    await expect(page.locator('h1')).toHaveCount(1);
+    const results = await new AxeBuilder({ page }).analyze();
+    expect(results.violations.filter((item) => ['serious', 'critical'].includes(item.impact || ''))).toEqual([]);
+  }
 });
 
 test('reloads the installed app while offline', async ({ page, context }) => {
