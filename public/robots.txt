@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://actuals-job-sequencer.sociobot.in/sitemap.xml
