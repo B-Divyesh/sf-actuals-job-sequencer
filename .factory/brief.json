@@ -1,0 +1,15 @@
+{
+  "slug": "actuals-job-sequencer",
+  "title": "Actuals Job Sequencer",
+  "user": "A solo or two-person trade business scheduling dependent job steps who needs the next promised dates to move when the prior step actually finishes late.",
+  "smallest_useful_product": "Offline PWA for up to five active jobs: ordered steps, actual finish date, non-working days, dependency shifts, and a concise dates-changed client message.",
+  "non_goals": ["route optimization", "staff payroll", "GPS tracking", "general Gantt planning"],
+  "success_measure": "At least 80% of downstream dates update correctly in a seeded test set, and pilots send client updates within one business day of a blocked step.",
+  "artifact_class": "pwa-offline",
+  "monetization": "one-time",
+  "constraints": [
+    "No location tracking",
+    "Export dates with timezone and holiday settings",
+    "Forecast dates are user-entered estimates"
+  ]
+}
