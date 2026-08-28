@@ -1,0 +1,9 @@
+{
+  "asset": "dependency-still-life.png",
+  "generated_at": "2026-08-28",
+  "generator": "Azure OpenAI factory-image via /opt/fleet/lib/gen-image.sh",
+  "size": "1536x1024",
+  "quality": "medium",
+  "prompt": "Editorial still life for a monochrome trade-business broadsheet: an old wooden folding carpenter's rule touching a line of five completely blank job-order paper slips, each slip slightly shifting the next like restrained dominoes, laid over a gridded paper workbench calendar. 1960s local newspaper photograph, coarse newsprint halftone dots, ink roller texture, folded paper edges, practical workshop mood. Overhead hard window light, crisp long shadows, 50mm editorial still-life composition, generous clear negative space around objects. Warm ivory paper, charcoal-black ink, exactly one small abstract brick-red registration mark. No people, no hands, no readable text, no letters, no numbers, no logos, no brands, no watermark, no gradient, no glossy 3D, no app screenshot, no blueprint cyan.",
+  "review": "Accepted: five intact blank slips, clear dependency composition, no people, logos, watermarks, or misleading UI. Incidental ruler/calender ticks are non-semantic texture."
+}

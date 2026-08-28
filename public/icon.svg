@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Actuals Job Sequencer mark">
+  <rect width="512" height="512" rx="72" fill="#f1eee6"/>
+  <path d="M88 112h336M88 400h336" stroke="#171713" stroke-width="24"/>
+  <path d="M114 176h72v72h-72zm106 44h72v72h-72zm106 44h72v72h-72z" fill="#171713"/>
+  <path d="m174 312 44 44 120-136" fill="none" stroke="#9d2e22" stroke-width="28" stroke-linecap="square"/>
+</svg>
