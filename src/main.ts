@@ -1,6 +1,5 @@
 import './style.css';
 import { deleteDemoData, loadData, saveData } from './db';
-import { checkoutUrl, initialLicense, storeLicense, verifyLicense, type LicenseState } from './license';
 import { actualOrderError, formatDate, isIsoDate, scheduleJob, todayIso } from './schedule';
 import type { AppData, HistoryEntry, Job, Step } from './types';
 
@@ -12,7 +11,6 @@ const ORIGIN = 'https://actuals-job-sequencer.sociobot.in';
 let route: Route = routeFromLocation();
 let demoMode = route === 'demo';
 let data = emptyData();
-let license: LicenseState = { token: '', unlocked: false, checking: false, notice: '' };
 let persistenceError = '';
 let railMode: 'active' | 'archived' = 'active';
 let toastTimer = 0;
@@ -37,7 +35,7 @@ function routePath(next: Route): string {
 const metadata: Record<Route, { title: string; description: string }> = {
   home: { title: 'Actuals Job Sequencer — move dates after finishes', description: 'Move forecast dates after an actual finish. Built for small trade crews and works offline after the first visit.' },
   demo: { title: 'Demo — Actuals Job Sequencer', description: 'Try an isolated sample job and see a late actual finish move every later forecast date.' },
-  privacy: { title: 'Privacy — Actuals Job Sequencer', description: 'How Actuals Job Sequencer stores job data and checks Crew licenses.' },
+  privacy: { title: 'Privacy — Actuals Job Sequencer', description: 'How Actuals Job Sequencer keeps job data in your browser.' },
   terms: { title: 'Terms — Actuals Job Sequencer', description: 'Terms for using Actuals Job Sequencer and its forecast dates.' },
   'not-found': { title: 'Page not found — Actuals Job Sequencer', description: 'This job-sheet page could not be found.' }
 };
@@ -89,13 +87,11 @@ function sharedFooter(): string {
 function renderLegal(page: 'privacy' | 'terms'): void {
   const privacy = `<p><strong>Effective 28 August 2026.</strong> Your job records stay in this browser.</p>
     <h2>What stays on your device</h2><p>Job names, client names, steps, actual finish dates, settings, and change notes use browser storage. We do not receive or sync them. Exports are made on your device.</p>
-    <h2>License checks</h2><p>If you buy or restore Crew edition, your license token is saved in this browser. It is sent to the Sociobot billing API at most once a day. The service also receives routine request data, such as your IP address.</p>
     <h2>Analytics and location</h2><p>We do not use analytics, advertising, GPS, or location tracking. The app does not load third-party fonts or scripts. Your timezone appears only in the app and exports.</p>
-    <h2>Your control</h2><p>Use Open data settings, then Export JSON, to keep a copy. Clearing this site’s browser data removes local jobs and the saved license token.</p><p>For billing-record questions, email <a href="mailto:privacy@sociobot.in">privacy@sociobot.in</a>.</p>`;
+    <h2>Your control</h2><p>Use Open data settings, then Export JSON, to keep a copy. Clearing this site’s browser data removes local jobs.</p><p>For privacy questions, email <a href="mailto:privacy@sociobot.in">privacy@sociobot.in</a>.</p>`;
   const terms = `<p><strong>Effective 28 August 2026.</strong> These terms apply to Actuals Job Sequencer.</p>
     <h2>Forecast dates are estimates</h2><p>The app recalculates dates from the information you enter. Forecast dates are not guarantees, contracts, or professional advice. Check every client update before sending it.</p>
     <h2>Your responsibilities</h2><p>You are responsible for accurate inputs, lawful use of client information, backups, and the dates you agree. Do not use this app as the only record for safety-critical work.</p>
-    <h2>Purchase and license</h2><p>Crew edition is a one-time purchase for the features shown at checkout. Sociobot/Dodo is the merchant of record. A refund revokes the license. You may restore a license on devices you control.</p>
     <h2>Availability and liability</h2><p>The software is provided “as is” without warranties. Where the law allows, Sociobot is not liable for lost data, missed dates, or indirect damages.</p>
     <h2>Contact</h2><p>Email <a href="mailto:support@sociobot.in">support@sociobot.in</a> with questions.</p>`;
   app.innerHTML = `${sharedHeader()}<main id="main" class="legal-main" tabindex="-1"><p class="edition">Field notice · ${page}</p><h1>${page === 'privacy' ? 'Privacy for your job records' : 'Terms for forecast dates'}</h1>${page === 'privacy' ? privacy : terms}</main>${sharedFooter()}<div id="route-status" class="sr-only" aria-live="polite"></div>`;
@@ -114,12 +110,10 @@ async function activateRoute(next: Route, focusHeading = false): Promise<void> {
 }
 
 async function startApp(): Promise<void> {
-  license = demoMode ? { token: '', unlocked: true, checking: false, notice: '' } : initialLicense();
   data = demoMode ? sampleData() : emptyData();
   try { const stored = await loadData(demoMode); if (stored && validateData(stored)) data = stored; else if (demoMode) await saveData(data, true); }
   catch { persistenceError = 'Browser storage could not be opened. Changes will last only until this tab closes. Export a copy before leaving.'; }
   ensureSelection(); renderApp(); registerServiceWorker();
-  if (!demoMode && license.token) { license = await verifyLicense(license); renderApp(); }
 }
 
 function focusRouteHeading(): void {
@@ -132,11 +126,11 @@ function focusRouteHeading(): void {
 function ensureSelection(): void { if (!data.jobs.some((job) => job.id === data.selectedJobId)) data.selectedJobId = data.jobs.find((job) => job.status === 'active')?.id ?? data.jobs[0]?.id; }
 function activeJob(): Job | undefined { return data.jobs.find((job) => job.id === data.selectedJobId); }
 function jobList(): Job[] { return data.jobs.filter((job) => job.status === railMode).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)); }
-function activeLimit(): number { return license.unlocked ? 5 : 1; }
+function activeLimit(): number { return 5; }
 
 function hero(): string {
   if (demoMode) return `<section class="hero demo-hero" aria-labelledby="page-heading"><div class="hero-copy"><p class="edition">Sample job · late rough-in</p><h1 id="page-heading">Move job dates after actual finishes</h1><p class="hero-dek">See the moved handover date and the client update below.</p></div></section>`;
-  return `<section class="hero" aria-labelledby="page-heading"><div class="hero-copy"><p class="edition">Working dates · built for the job site</p><h1 id="page-heading">Move job dates after actual finishes</h1><p class="hero-dek">For small trade crews when a late step changes the forecast dates you gave a client.</p><div class="hero-actions"><a class="button primary" href="/demo/" data-route="demo">Try it with sample data</a><button class="button" data-action="add-job">Start your first job</button></div><p class="action-note">See a late rough-in move the handover date.</p></div><ul class="hero-facts" aria-label="Product facts"><li>Works offline after the first visit.</li><li>Jobs stay in this browser.</li><li>$29 once; one active job is free.</li></ul></section>`;
+  return `<section class="hero" aria-labelledby="page-heading"><div class="hero-copy"><p class="edition">Working dates · built for the job site</p><h1 id="page-heading">Move job dates after actual finishes</h1><p class="hero-dek">For small trade crews when a late step changes the forecast dates you gave a client.</p><div class="hero-actions"><a class="button primary" href="/demo/" data-route="demo">Try it with sample data</a><button class="button" data-action="add-job">Start your first job</button></div><p class="action-note">See a late rough-in move the handover date.</p></div><ul class="hero-facts" aria-label="Product facts"><li>Works offline after the first visit.</li><li>Jobs stay in this browser.</li><li>Five active jobs. No account.</li></ul></section>`;
 }
 
 function demoBanner(): string {
@@ -146,7 +140,7 @@ function demoBanner(): string {
 function renderApp(): void {
   ensureSelection(); const job = activeJob(); const jobs = jobList();
   app.innerHTML = `${sharedHeader()}${demoMode ? demoBanner() : ''}${hero()}
-    ${persistenceError ? `<div class="banner" role="alert">${escapeHtml(persistenceError)}</div>` : ''}${license.notice ? `<div class="banner" role="status">${escapeHtml(license.notice)}</div>` : ''}
+    ${persistenceError ? `<div class="banner" role="alert">${escapeHtml(persistenceError)}</div>` : ''}
     <div class="utility-bar"><span class="network ${navigator.onLine ? '' : 'offline'}" aria-live="polite">${navigator.onLine ? 'Saved in this browser' : 'Offline · changes save here'}</span><button class="button" data-action="settings">Open data settings</button></div>
     <div class="app-shell"><aside class="job-rail" aria-labelledby="jobs-heading"><div class="rail-head"><h2 id="jobs-heading">Your jobs</h2><span>${data.jobs.filter((item) => item.status === 'active').length}/${activeLimit()}</span></div><div class="mode-tabs" aria-label="Job status"><button data-action="rail-mode" data-mode="active" aria-pressed="${railMode === 'active'}">Active</button><button data-action="rail-mode" data-mode="archived" aria-pressed="${railMode === 'archived'}">Archived</button></div>${jobs.length ? `<ul class="job-list">${jobs.map(renderJobPick).join('')}</ul>` : `<p class="all-clear">No ${railMode} jobs. Start one to add its forecast dates.</p>`}<div class="rail-actions"><button class="button primary" data-action="add-job">Add a job</button><button class="button" data-action="settings">Open data settings</button></div></aside>
     <main id="main" class="workspace" tabindex="-1">${job ? renderJob(job) : renderEmpty()}</main></div>${explainSections()}${sharedFooter()}<div id="toast-root" aria-live="polite"></div><div id="route-status" class="sr-only" aria-live="polite"></div>`;
@@ -185,7 +179,7 @@ function makeClientMessage(job: Job, steps = scheduleJob(job, data.settings)): s
 }
 
 function explainSections(): string {
-  return `<section class="explain" aria-labelledby="how-heading"><h2 id="how-heading">How it works</h2><ol><li><strong>Add the ordered steps.</strong><span>Give each step a working-day estimate.</span></li><li><strong>Record the actual finish.</strong><span>The next forecast starts after the work finished.</span></li><li><strong>Send the changed dates.</strong><span>Copy the client update after checking it.</span></li></ol></section><section class="limits" aria-labelledby="limits-heading"><div><h2 id="limits-heading">Built for dates, not dispatch</h2><p>It does not plan routes, payroll, GPS, or whole projects. Forecast dates remain your estimates.</p></div><div><h2>Crew edition</h2><p><strong>$29 one time.</strong> Keep five active jobs instead of one. Date scheduling and exports remain free.</p><button class="button" data-action="settings">See Crew edition</button></div></section>`;
+  return `<section class="explain" aria-labelledby="how-heading"><h2 id="how-heading">How it works</h2><ol><li><strong>Add the ordered steps.</strong><span>Give each step a working-day estimate.</span></li><li><strong>Record the actual finish.</strong><span>The next forecast starts after the work finished.</span></li><li><strong>Send the changed dates.</strong><span>Copy the client update after checking it.</span></li></ol></section><section class="limits" aria-labelledby="limits-heading"><div><h2 id="limits-heading">Built for dates, not dispatch</h2><p>It does not plan routes, payroll, GPS, or whole projects. Forecast dates remain your estimates.</p></div><div><h2>Five jobs, kept focused</h2><p>Track up to five active jobs. Archive finished jobs and restore them when needed.</p><button class="button" data-action="settings">Open data settings</button></div></section>`;
 }
 
 function formatTimestamp(value: string): string { return new Intl.DateTimeFormat('en', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }).format(new Date(value)); }
@@ -213,7 +207,7 @@ async function handleAction(action: string, element: HTMLElement): Promise<void>
   if (action === 'reset-demo') { await deleteDemoData(); data = sampleData(); await saveData(data, true); renderApp(); showToast('Sample job reset.'); return; }
   if (action === 'start-real') { await deleteDemoData(); history.pushState({ route: 'home' }, '', '/'); await activateRoute('home', true); return; }
   const job = activeJob();
-  if (action === 'settings') return openSettings(element.closest('.limits') ? 'license' : '');
+  if (action === 'settings') return openSettings();
   if (action === 'add-job') return addJob();
   if (action === 'rail-mode') { railMode = element.dataset.mode as typeof railMode; renderApp(); return; }
   if (action === 'select-job') { data.selectedJobId = element.dataset.id; await persist(); renderApp(); return; }
@@ -240,7 +234,7 @@ function formError(): string { return '<p class="field-error" role="alert" tabin
 
 function addJob(): void {
   const activeCount = data.jobs.filter((job) => job.status === 'active').length;
-  if (activeCount >= activeLimit()) { openSettings('license'); showToast(license.unlocked ? 'Five active jobs is the limit. Archive one to add another.' : 'One active job is free. Crew edition allows five.'); return; }
+  if (activeCount >= activeLimit()) { showToast('Five active jobs is the limit. Archive one to add another.'); return; }
   const dialog = openDialog('Start a job', `<form id="job-form" novalidate><div class="field"><label for="job-name">Job name</label><input id="job-name" name="name" required maxlength="80" autocomplete="off"><p class="field-hint">Use the name you would say on the phone.</p></div><div class="field"><label for="client-name">Client name <span aria-hidden="true">(optional)</span></label><input id="client-name" name="client" maxlength="80" autocomplete="name"></div><div class="field"><label for="start-date">First forecast start</label><input id="start-date" name="startDate" type="date" required value="${todayIso()}"><p class="field-hint">A non-working date rolls forward.</p></div>${formError()}<div class="form-actions"><button type="button" class="button" data-action="close-dialog">Cancel</button><button class="button primary" type="submit">Create job</button></div></form>`);
   dialog.querySelector<HTMLFormElement>('#job-form')!.addEventListener('submit', async (event) => { event.preventDefault(); const values = new FormData(event.currentTarget as HTMLFormElement); const name = String(values.get('name') || '').trim(); const startDate = String(values.get('startDate') || ''); if (!name || !isIsoDate(startDate)) return setDialogError(dialog, 'Enter a job name and a valid first forecast date.'); const now = new Date().toISOString(); const newJob: Job = { id: crypto.randomUUID(), name, client: String(values.get('client') || '').trim(), startDate, status: 'active', createdAt: now, updatedAt: now, steps: [], history: [] }; data.jobs.push(newJob); data.selectedJobId = newJob.id; railMode = 'active'; await persist(); dialog.close(); renderApp(); showToast('Job created. Add its first step.'); });
 }
@@ -273,20 +267,18 @@ async function moveStepUp(job: Job, id: string): Promise<void> {
 }
 
 async function toggleArchive(job: Job): Promise<void> {
-  if (job.status === 'archived' && data.jobs.filter((item) => item.status === 'active').length >= activeLimit()) { showToast(license.unlocked ? 'Archive an active job before restoring this one.' : 'Crew edition allows five active jobs.'); return; }
+  if (job.status === 'archived' && data.jobs.filter((item) => item.status === 'active').length >= activeLimit()) { showToast('Archive an active job before restoring this one.'); return; }
   job.status = job.status === 'active' ? 'archived' : 'active'; touch(job, `Job ${job.status}.`); railMode = job.status; await persist(); renderApp(); showToast(`Job ${job.status}.`);
 }
 
 async function copyMessage(job: Job): Promise<void> { try { await navigator.clipboard.writeText(makeClientMessage(job)); showToast('Client update copied.'); } catch { showToast('Copy was blocked. Select the update and copy it manually.'); } }
 async function shareMessage(job: Job): Promise<void> { try { await navigator.share({ title: `${job.name} date update`, text: makeClientMessage(job) }); } catch (error) { if ((error as DOMException).name !== 'AbortError') showToast('Sharing was unavailable. Copy the client update instead.'); } }
 
-function openSettings(focus = ''): void {
+function openSettings(): void {
   const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; const zones = [...new Set([data.settings.timezone, 'UTC', 'America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles', 'Europe/London', 'Asia/Kolkata', 'Australia/Sydney'])];
-  const dialog = openDialog('Data and calendar settings', `<form id="settings-form" novalidate><section class="settings-section"><h3>Working calendar</h3><fieldset class="days"><legend>Working days</legend>${weekdays.map((day, index) => `<label class="day-check"><input type="checkbox" name="workday" value="${index}" ${data.settings.workdays.includes(index) ? 'checked' : ''}><span>${day}</span></label>`).join('')}</fieldset><div class="field"><label for="timezone">Timezone</label><input id="timezone" name="timezone" list="timezones" required value="${escapeHtml(data.settings.timezone)}"><datalist id="timezones">${zones.map((zone) => `<option value="${escapeHtml(zone)}"></option>`).join('')}</datalist><p class="field-hint">Every export includes this setting.</p></div><div class="field"><label for="holidays">Non-working dates</label><textarea id="holidays" name="holidays" placeholder="2026-12-25&#10;2026-12-26">${escapeHtml(data.settings.holidays.join('\n'))}</textarea><p class="field-hint">Enter one YYYY-MM-DD date per line.</p></div>${formError()}<button class="button primary" type="submit">Save working calendar</button></section><section class="settings-section"><h3>Your data</h3><p>JSON keeps a complete backup. CSV opens in a spreadsheet. Both include your calendar settings.</p><div class="message-actions"><button type="button" class="button" id="export-json">Export JSON</button><button type="button" class="button" id="export-csv">Export CSV</button><label class="button" for="import-json">Import JSON</label><input id="import-json" type="file" accept="application/json,.json" hidden></div></section><section class="settings-section" id="license-section"><h3>Crew edition</h3><p><span class="price">$29 one time</span><br>Keep five active jobs instead of one. Date scheduling and exports remain free.</p>${demoMode ? '<p>Leave the demo to buy or restore a license.</p>' : license.unlocked ? '<p><strong>✓ Crew edition is active in this browser.</strong></p>' : `<a class="button signal" href="${checkoutUrl()}">Buy Crew edition</a><p>Sociobot/Dodo is the merchant of record. A refund revokes the license.</p><div class="license-row"><div class="field"><label for="license-token">Have a license? Paste it</label><input id="license-token" type="text" autocomplete="off" spellcheck="false" value="${escapeHtml(license.token)}"></div><button type="button" class="button" id="restore-license">Verify license</button></div><p id="license-note" class="field-hint" aria-live="polite">${escapeHtml(license.checking ? 'Checking license…' : license.notice)}</p>`}<p><a href="/privacy/" data-route="privacy">Privacy</a> · <a href="/terms/" data-route="terms">Terms</a></p></section></form>`);
-  if (focus === 'license') queueMicrotask(() => dialog.querySelector('#license-section')?.scrollIntoView({ block: 'start' }));
+  const dialog = openDialog('Data and calendar settings', `<form id="settings-form" novalidate><section class="settings-section"><h3>Working calendar</h3><fieldset class="days"><legend>Working days</legend>${weekdays.map((day, index) => `<label class="day-check"><input type="checkbox" name="workday" value="${index}" ${data.settings.workdays.includes(index) ? 'checked' : ''}><span>${day}</span></label>`).join('')}</fieldset><div class="field"><label for="timezone">Timezone</label><input id="timezone" name="timezone" list="timezones" required value="${escapeHtml(data.settings.timezone)}"><datalist id="timezones">${zones.map((zone) => `<option value="${escapeHtml(zone)}"></option>`).join('')}</datalist><p class="field-hint">Every export includes this setting.</p></div><div class="field"><label for="holidays">Non-working dates</label><textarea id="holidays" name="holidays" placeholder="2026-12-25&#10;2026-12-26">${escapeHtml(data.settings.holidays.join('\n'))}</textarea><p class="field-hint">Enter one YYYY-MM-DD date per line.</p></div>${formError()}<button class="button primary" type="submit">Save working calendar</button></section><section class="settings-section"><h3>Your data</h3><p>JSON keeps a complete backup. CSV opens in a spreadsheet. Both include your calendar settings.</p><div class="message-actions"><button type="button" class="button" id="export-json">Export JSON</button><button type="button" class="button" id="export-csv">Export CSV</button><label class="button" for="import-json">Import JSON</label><input id="import-json" type="file" accept="application/json,.json" hidden></div></section><p><a href="/privacy/" data-route="privacy">Privacy</a> · <a href="/terms/" data-route="terms">Terms</a></p></form>`);
   dialog.querySelector<HTMLFormElement>('#settings-form')!.addEventListener('submit', async (event) => { event.preventDefault(); const values = new FormData(event.currentTarget as HTMLFormElement); const workdays = values.getAll('workday').map(Number).sort(); const timezone = String(values.get('timezone') || '').trim(); const holidayLines = String(values.get('holidays') || '').split(/\s+/).filter(Boolean); const invalid = holidayLines.find((date) => !isIsoDate(date)); if (!workdays.length) return setDialogError(dialog, 'Choose at least one working day.'); try { new Intl.DateTimeFormat('en', { timeZone: timezone }).format(); } catch { return setDialogError(dialog, 'Enter a valid timezone, such as Europe/London.'); } if (invalid) return setDialogError(dialog, `“${invalid}” is not a valid YYYY-MM-DD date.`); data.settings = { timezone, workdays, holidays: [...new Set(holidayLines)].sort() }; await persist(); dialog.close(); renderApp(); showToast('Working calendar saved. Every forecast date was recalculated.'); });
   dialog.querySelector('#export-json')!.addEventListener('click', exportJson); dialog.querySelector('#export-csv')!.addEventListener('click', exportCsv); dialog.querySelector<HTMLInputElement>('#import-json')!.addEventListener('change', (event) => void importJson(((event.currentTarget as HTMLInputElement).files || [])[0], dialog));
-  dialog.querySelector('#restore-license')?.addEventListener('click', async () => { const token = dialog.querySelector<HTMLInputElement>('#license-token')!.value.trim(); if (!token) { dialog.querySelector('#license-note')!.textContent = 'Paste the token from your receipt first.'; return; } license = storeLicense(token); dialog.querySelector('#license-note')!.textContent = 'Checking this license…'; license = await verifyLicense(license, true); dialog.close(); renderApp(); showToast(license.notice || 'License checked.'); });
 }
 
 function exportJson(): void { download(`actuals-jobs-${todayIso()}.json`, JSON.stringify({ exportedAt: new Date().toISOString(), product: 'actuals-job-sequencer', ...data }, null, 2), 'application/json'); showToast('JSON backup exported.'); }

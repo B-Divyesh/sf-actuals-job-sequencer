@@ -166,8 +166,6 @@ dialog::backdrop { background: rgb(23 23 19 / 58%); backdrop-filter: blur(2px); 
 .settings-section:first-child { padding-top: 0; }
 .settings-section h3 { margin: 0 0 10px; font: 700 1.25rem/1.2 Georgia, serif; }
 .settings-section p { margin: 8px 0 14px; }
-.price { font: 700 1.8rem/1 Georgia, serif; }
-.license-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: end; }
 
 .legal-main { max-width: 760px; min-height: 70vh; margin: 0 auto; padding: 52px 24px 72px; }
 .legal-main h1, .not-found h1 { margin: 0 0 30px; font: 700 clamp(2.5rem, 8vw, 5.5rem)/.86 Georgia, serif; letter-spacing: -.055em; }
@@ -238,7 +236,6 @@ dialog::backdrop { background: rgb(23 23 19 / 58%); backdrop-filter: blur(2px); 
   .not-found { margin-inline: 20px; }
   .dialog-head, .dialog-body { padding-left: 18px; padding-right: 18px; }
   .days { grid-template-columns: repeat(4, 1fr); }
-  .license-row { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {

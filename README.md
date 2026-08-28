@@ -56,7 +56,7 @@ Every public claim and its clean-state command is listed in [.factory/claims.jso
 
 Job and client data stays in this browser. The app uses no analytics, third-party scripts, remote fonts, GPS, or location tracking. Export JSON to keep a complete backup.
 
-One active job and exports are free. Crew costs $29 once and allows five active jobs. Checkout and license checks use the Sociobot billing API.
+Use up to five active jobs without an account. The current release does not take payment.
 
 See [Privacy](https://actuals-job-sequencer.sociobot.in/privacy/) and [Terms](https://actuals-job-sequencer.sociobot.in/terms/).
 

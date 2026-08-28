@@ -169,49 +169,25 @@ test('@claim:offline-reload sample job reloads after the connection is turned of
   await expect(page.getByText('Offline · changes save here')).toBeVisible();
 });
 
-test('@claim:free-crew-limit free mode allows one active job and shows the one-time Crew offer', async ({ page }) => {
+test('@claim:five-job-limit five active jobs and exports work without an account', async ({ page }) => {
   await openFreshDemo(page);
   await page.getByRole('button', { name: 'Start for real' }).click();
-  await expect(page.getByText('$29 once; one active job is free.')).toBeVisible();
-  await page.getByRole('button', { name: 'Start your first job' }).first().click();
-  await page.getByLabel('Job name').fill('First free job');
-  await page.getByLabel('First forecast start').fill('2026-09-03');
-  await page.getByRole('button', { name: 'Create job' }).click();
+  await expect(page.getByText('Five active jobs. No account.')).toBeVisible();
+  await expect(page.getByRole('link', { name: /Buy|checkout/i })).toHaveCount(0);
+  for (let index = 1; index <= 5; index += 1) {
+    await page.getByRole('button', { name: index === 1 ? 'Start your first job' : 'Add a job' }).first().click();
+    await page.getByLabel('Job name').fill(`Job ${index}`);
+    await page.getByLabel('First forecast start').fill('2026-09-03');
+    await page.getByRole('button', { name: 'Create job' }).click();
+  }
+  await expect(page.locator('.rail-head')).toContainText('5/5');
   await page.getByRole('button', { name: 'Open data settings' }).first().click();
   const exportPromise = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Export CSV' }).click();
   expect((await exportPromise).suggestedFilename()).toMatch(/\.csv$/);
   await page.getByRole('button', { name: 'Close dialog' }).click();
   await page.getByRole('button', { name: 'Add a job' }).click();
-  await expect(page.getByText('$29 one time', { exact: true })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Buy Crew edition' })).toHaveAttribute('href', 'https://api.sociobot.in/api/v1/products/actuals-job-sequencer/checkout');
-});
-
-test('@claim:license-check returned licenses are stored and checked through Sociobot once per day', async ({ page }) => {
-  await openFreshDemo(page);
-  await page.getByRole('button', { name: 'Start for real' }).click();
-  await page.addInitScript(() => {
-    const originalFetch = window.fetch.bind(window);
-    window.fetch = async (input, init) => {
-      const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
-      if (url === 'https://api.sociobot.in/api/v1/products/actuals-job-sequencer/verify?license=test-license') {
-        localStorage.setItem('license-test-url', url);
-        localStorage.setItem('license-test-calls', String(Number(localStorage.getItem('license-test-calls') || '0') + 1));
-        return new Response(JSON.stringify({ valid: true, reason: 'ok' }), { status: 200, headers: { 'Content-Type': 'application/json' } });
-      }
-      return originalFetch(input, init);
-    };
-  });
-  await page.goto('/?license=test-license');
-  await expect(page.getByText('Crew edition unlocked on this device.')).toBeVisible();
-  expect(new URL(page.url()).searchParams.has('license')).toBe(false);
-  expect(await page.evaluate(() => localStorage.getItem('sb_license:actuals-job-sequencer'))).toBe('test-license');
-  expect(await page.evaluate(() => localStorage.getItem('license-test-url'))).toBe('https://api.sociobot.in/api/v1/products/actuals-job-sequencer/verify?license=test-license');
-  expect(await page.evaluate(() => localStorage.getItem('license-test-calls'))).toBe('1');
-  await page.reload();
-  await page.getByRole('button', { name: 'Open data settings' }).first().click();
-  await expect(page.getByText('Crew edition is active in this browser.')).toBeVisible();
-  expect(await page.evaluate(() => localStorage.getItem('license-test-calls'))).toBe('1');
+  await expect(page.getByText('Five active jobs is the limit. Archive one to add another.')).toBeVisible();
 });
 
 test('routes set metadata, restore focus, and provide a designed not-found page', async ({ page }) => {

@@ -49,17 +49,10 @@
     "sandbox": "fresh /demo/ sample; wait for service-worker control, turn the browser offline, reload, and assert the sample schedule and offline state"
   },
   {
-    "id": "free-crew-limit",
-    "claim": "One active job and exports are free; Crew costs $29 once and allows five active jobs through Sociobot checkout.",
-    "where": "first screen, Crew section, data settings, README",
-    "test": "npm run test:e2e -- --grep @claim:free-crew-limit",
-    "sandbox": "enter through /demo/, return to clean real mode, create one active job, attempt a second, and assert price, five-job offer, and checkout target"
-  },
-  {
-    "id": "license-check",
-    "claim": "A returned Crew license is stored in this browser and checked through the Sociobot billing API at most once per day.",
-    "where": "privacy, README",
-    "test": "npm run test:e2e -- --grep @claim:license-check",
-    "sandbox": "enter through /demo/, return to real mode with a test license, mock the Sociobot response, assert token capture and URL cleanup, then reload and assert no second daily check"
+    "id": "five-job-limit",
+    "claim": "The app tracks up to five active jobs without an account or payment and keeps exports available.",
+    "where": "first screen, job list, data settings, README",
+    "test": "npm run test:e2e -- --grep @claim:five-job-limit",
+    "sandbox": "enter through /demo/, return to clean real mode, assert no purchase link, create five active jobs, export CSV, then assert a sixth job is rejected"
   }
 ]
