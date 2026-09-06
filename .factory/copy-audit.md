@@ -1,6 +1,6 @@
-# Copy audit — polish round 2
+# Copy audit — repair 1
 
-Audited 28 August 2026 against the fresh `/` first screen and all landing sections. Hyphenated terms count as one word.
+Audited 6 September 2026 against the fresh `/` first screen and all landing sections. Hyphenated terms count as one word.
 
 | Words | Sentence | Result |
 | ---: | --- | --- |

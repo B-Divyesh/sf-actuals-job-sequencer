@@ -2,11 +2,12 @@ import './style.css';
 import { deleteDemoData, loadData, saveData } from './db';
 import { actualOrderError, formatDate, isIsoDate, scheduleJob, todayIso } from './schedule';
 import type { AppData, HistoryEntry, Job, Step } from './types';
+import { validateAppData } from './validation';
 
 type Route = 'home' | 'demo' | 'privacy' | 'terms' | 'not-found';
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
-const BUILD = '1.2.0';
+const BUILD = '1.2.1';
 const ORIGIN = 'https://actuals-job-sequencer.sociobot.in';
 let route: Route = routeFromLocation();
 let demoMode = route === 'demo';
@@ -111,7 +112,13 @@ async function activateRoute(next: Route, focusHeading = false): Promise<void> {
 
 async function startApp(): Promise<void> {
   data = demoMode ? sampleData() : emptyData();
-  try { const stored = await loadData(demoMode); if (stored && validateData(stored)) data = stored; else if (demoMode) await saveData(data, true); }
+  try {
+    const stored = await loadData(demoMode);
+    const checked = stored ? validateAppData(stored) : undefined;
+    if (checked?.valid) data = checked.data;
+    else if (demoMode) await saveData(data, true);
+    else if (checked && !checked.valid) persistenceError = 'Saved browser data is incomplete, so it was not opened. Import a complete JSON backup or clear this site’s browser data.';
+  }
   catch { persistenceError = 'Browser storage could not be opened. Changes will last only until this tab closes. Export a copy before leaving.'; }
   ensureSelection(); renderApp(); registerServiceWorker();
 }
@@ -283,19 +290,32 @@ function openSettings(): void {
 
 function exportJson(): void { download(`actuals-jobs-${todayIso()}.json`, JSON.stringify({ exportedAt: new Date().toISOString(), product: 'actuals-job-sequencer', ...data }, null, 2), 'application/json'); showToast('JSON backup exported.'); }
 function csvCell(value: unknown): string { return `"${String(value ?? '').replaceAll('"', '""')}"`; }
-function exportCsv(): void { const header = ['job', 'client', 'status', 'step_order', 'step', 'duration_workdays', 'baseline_start', 'baseline_finish', 'forecast_start', 'forecast_finish', 'actual_finish', 'timezone', 'working_days', 'holidays']; const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; const rows = data.jobs.flatMap((job) => scheduleJob(job, data.settings).map((step, index) => [job.name, job.client, job.status, index + 1, step.name, step.duration, step.baselineStart, step.baselineFinish, step.forecastStart, step.forecastFinish, step.actualFinish || '', data.settings.timezone, data.settings.workdays.map((day) => dayNames[day]).join('|'), data.settings.holidays.join('|')])); download(`actuals-jobs-${todayIso()}.csv`, [header, ...rows].map((row) => row.map(csvCell).join(',')).join('\r\n'), 'text/csv;charset=utf-8'); showToast('CSV exported with calendar settings.'); }
+function exportCsv(): void {
+  const header = ['job', 'client', 'status', 'step_order', 'step', 'duration_workdays', 'baseline_start', 'baseline_finish', 'forecast_start', 'forecast_finish', 'actual_finish', 'timezone', 'working_days', 'holidays'];
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const calendar = [data.settings.timezone, data.settings.workdays.map((day) => dayNames[day]).join('|'), data.settings.holidays.join('|')];
+  const rows = data.jobs.flatMap((job) => {
+    const steps = scheduleJob(job, data.settings);
+    if (steps.length === 0) return [[job.name, job.client, job.status, '', '', '', '', '', '', '', '', ...calendar]];
+    return steps.map((step, index) => [job.name, job.client, job.status, index + 1, step.name, step.duration, step.baselineStart, step.baselineFinish, step.forecastStart, step.forecastFinish, step.actualFinish || '', ...calendar]);
+  });
+  download(`actuals-jobs-${todayIso()}.csv`, [header, ...rows].map((row) => row.map(csvCell).join(',')).join('\r\n'), 'text/csv;charset=utf-8');
+  showToast('CSV exported with every job and calendar settings.');
+}
 
 async function importJson(file: File | undefined, dialog: HTMLDialogElement): Promise<void> {
   if (!file) return;
-  try { const parsed = JSON.parse(await file.text()) as unknown; if (!validateData(parsed)) throw new Error('This backup has invalid jobs, dates, or step order.'); const incoming = parsed as AppData; if (!window.confirm(`Replace this ${demoMode ? 'demo’s' : 'browser’s'} ${data.jobs.length} jobs with the ${incoming.jobs.length} jobs in “${file.name}”?`)) return; data = incoming; ensureSelection(); await persist(); dialog.close(); renderApp(); showToast('JSON backup imported.'); } catch (error) { setDialogError(dialog, error instanceof Error ? error.message : 'The backup could not be read.'); }
-}
-
-function validateData(value: unknown): value is AppData {
-  if (!value || typeof value !== 'object') return false; const item = value as Partial<AppData>;
-  if (item.version !== 1 || !Array.isArray(item.jobs) || !item.settings || typeof item.settings !== 'object') return false;
-  if (!Array.isArray(item.settings.workdays) || !item.settings.workdays.length || !item.settings.workdays.every((day) => Number.isInteger(day) && day >= 0 && day <= 6)) return false;
-  if (typeof item.settings.timezone !== 'string' || !Array.isArray(item.settings.holidays) || !item.settings.holidays.every(isIsoDate)) return false;
-  return item.jobs.every((job) => job && typeof job.id === 'string' && typeof job.name === 'string' && typeof job.client === 'string' && isIsoDate(job.startDate) && ['active', 'archived'].includes(job.status) && Array.isArray(job.steps) && job.steps.every((step) => typeof step.id === 'string' && typeof step.name === 'string' && Number.isInteger(step.duration) && step.duration >= 1 && step.duration <= 120 && (!step.actualFinish || isIsoDate(step.actualFinish))) && Array.isArray(job.history) && !actualOrderError(job));
+  try {
+    const checked = validateAppData(JSON.parse(await file.text()) as unknown);
+    if (!checked.valid) throw new Error(checked.error);
+    const incoming = checked.data;
+    if (!window.confirm(`Replace this ${demoMode ? 'demo’s' : 'browser’s'} ${data.jobs.length} jobs with the ${incoming.jobs.length} jobs in “${file.name}”?`)) return;
+    data = incoming;
+    await persist();
+    dialog.close();
+    renderApp();
+    showToast('JSON backup imported.');
+  } catch (error) { setDialogError(dialog, error instanceof Error ? error.message : 'The backup could not be read. Your current jobs were not changed.'); }
 }
 
 function download(name: string, contents: string, type: string): void { const url = URL.createObjectURL(new Blob([contents], { type })); const link = document.createElement('a'); link.href = url; link.download = name; link.click(); window.setTimeout(() => URL.revokeObjectURL(url), 1000); }

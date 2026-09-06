@@ -25,7 +25,7 @@
     "claim": "CSV export includes every step, forecast, actual finish, timezone, workdays, and non-working dates.",
     "where": "data settings, README",
     "test": "npm run test:e2e -- --grep @claim:csv-export",
-    "sandbox": "fresh /demo/ sample; download CSV and inspect its header, row count, sample values, and calendar settings"
+    "sandbox": "fresh /demo/ sample plus a zero-step job; download CSV and inspect every step row, the zero-step job row, and calendar settings"
   },
   {
     "id": "json-backup",
@@ -53,7 +53,7 @@
     "claim": "The app tracks up to five active jobs without an account or payment and keeps exports available.",
     "where": "first screen, job list, data settings, README",
     "test": "npm run test:e2e -- --grep @claim:five-job-limit",
-    "sandbox": "enter through /demo/, return to clean real mode, assert no purchase link, create five active jobs, export CSV, then assert a sixth job is rejected"
+    "sandbox": "enter through /demo/, return to clean real mode, create five zero-step jobs, inspect their CSV rows, then reject a sixth job through both import and the form without replacing saved jobs"
   },
   {
     "id": "archive-restore",

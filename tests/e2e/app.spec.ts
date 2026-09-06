@@ -35,6 +35,37 @@ function parseCsv(csv: string): string[][] {
   });
 }
 
+async function readDownload(download: import('@playwright/test').Download): Promise<string> {
+  const stream = await download.createReadStream();
+  let contents = '';
+  for await (const chunk of stream) contents += chunk.toString();
+  return contents;
+}
+
+function importBuffer(value: unknown): never {
+  return (globalThis as unknown as { Buffer: { from(value: string): unknown } }).Buffer.from(JSON.stringify(value)) as never;
+}
+
+function backupWithActiveJobs(count: number): unknown {
+  const timestamp = '2026-09-06T12:00:00.000Z';
+  return {
+    version: 1,
+    settings: { timezone: 'Europe/London', workdays: [1, 2, 3, 4, 5], holidays: ['2026-12-25'] },
+    jobs: Array.from({ length: count }, (_, index) => ({
+      id: `import-job-${index + 1}`,
+      name: `Imported job ${index + 1}`,
+      client: '',
+      startDate: '2026-09-07',
+      status: 'active',
+      createdAt: timestamp,
+      updatedAt: timestamp,
+      steps: [],
+      history: []
+    })),
+    selectedJobId: 'import-job-1'
+  };
+}
+
 test.beforeEach(async ({ page, context }) => {
   await context.clearCookies();
   await clearBrowserState(page);
@@ -92,14 +123,13 @@ test('@claim:dependency-reflow late actuals move later forecasts and impossible 
   await page.getByRole('button', { name: 'Open data settings' }).first().click();
   const invalid = {
     version: 1, settings: { timezone: 'UTC', workdays: [1, 2, 3, 4, 5], holidays: [] },
-    jobs: [{ id: 'bad', name: 'Impossible order', client: '', startDate: '2026-09-03', status: 'active', createdAt: '', updatedAt: '', history: [], steps: [
+    jobs: [{ id: 'bad', name: 'Impossible order', client: '', startDate: '2026-09-03', status: 'active', createdAt: '2026-09-03T08:00:00.000Z', updatedAt: '2026-09-09T08:00:00.000Z', history: [], steps: [
       { id: 'one', name: 'First', duration: 1, actualFinish: '2026-09-09' },
       { id: 'two', name: 'Second', duration: 1, actualFinish: '2026-09-03' }
-    ] }]
+    ] }], selectedJobId: 'bad'
   };
-  const nodeBuffer = (globalThis as unknown as { Buffer: { from(value: string): unknown } }).Buffer.from(JSON.stringify(invalid));
-  await page.getByLabel('Import JSON').setInputFiles({ name: 'impossible.json', mimeType: 'application/json', buffer: nodeBuffer as never });
-  await expect(page.getByRole('alert')).toContainText('invalid jobs, dates, or step order');
+  await page.getByLabel('Import JSON').setInputFiles({ name: 'impossible.json', mimeType: 'application/json', buffer: importBuffer(invalid) });
+  await expect(page.getByRole('alert')).toContainText('actual finishes out of step order');
   await expect(page.getByRole('heading', { name: 'Mercer kitchen fit' })).toBeVisible();
 });
 
@@ -114,23 +144,61 @@ test('@claim:client-update sample late finish produces a ready-to-copy client up
   await expect(page.getByText('Client update copied.')).toBeVisible();
 });
 
-test('@claim:csv-export CSV contains every sample step, forecast, actual finish, and calendar setting', async ({ page }) => {
+test('@claim:csv-export CSV contains every step, zero-step job, forecast, actual finish, and calendar setting', async ({ page }) => {
   await openFreshDemo(page);
+  await page.getByRole('button', { name: 'Add a job' }).click();
+  await page.getByLabel('Job name').fill('Boundary job without steps');
+  await page.getByLabel('Client name').fill('Owen Price');
+  await page.getByLabel('First forecast start').fill('2026-09-18');
+  await page.getByRole('button', { name: 'Create job' }).click();
   await page.getByRole('button', { name: 'Open data settings' }).first().click();
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Export CSV' }).click();
-  const download = await downloadPromise;
-  const stream = await download.createReadStream();
-  let csv = ''; for await (const chunk of stream) csv += chunk.toString();
-  const rows = parseCsv(csv);
+  const rows = parseCsv(await readDownload(await downloadPromise));
   const header = ['job', 'client', 'status', 'step_order', 'step', 'duration_workdays', 'baseline_start', 'baseline_finish', 'forecast_start', 'forecast_finish', 'actual_finish', 'timezone', 'working_days', 'holidays'];
-  expect(rows).toHaveLength(4);
+  expect(rows).toHaveLength(5);
   expect(rows[0]).toEqual(header);
   expect(rows.slice(1)).toEqual([
     ['Mercer kitchen fit', 'Rina Mercer', 'active', '1', 'Strip out', '2', '2026-09-07', '2026-09-08', '2026-09-07', '2026-09-08', '2026-09-08', 'Europe/London', 'Mon|Tue|Wed|Thu|Fri', '2026-09-15'],
     ['Mercer kitchen fit', 'Rina Mercer', 'active', '2', 'Rough-in', '2', '2026-09-09', '2026-09-10', '2026-09-09', '2026-09-14', '2026-09-14', 'Europe/London', 'Mon|Tue|Wed|Thu|Fri', '2026-09-15'],
-    ['Mercer kitchen fit', 'Rina Mercer', 'active', '3', 'Fit and handover', '2', '2026-09-11', '2026-09-14', '2026-09-16', '2026-09-17', '', 'Europe/London', 'Mon|Tue|Wed|Thu|Fri', '2026-09-15']
+    ['Mercer kitchen fit', 'Rina Mercer', 'active', '3', 'Fit and handover', '2', '2026-09-11', '2026-09-14', '2026-09-16', '2026-09-17', '', 'Europe/London', 'Mon|Tue|Wed|Thu|Fri', '2026-09-15'],
+    ['Boundary job without steps', 'Owen Price', 'active', '', '', '', '', '', '', '', '', 'Europe/London', 'Mon|Tue|Wed|Thu|Fri', '2026-09-15']
   ]);
+});
+
+test('incomplete JSON import is announced and leaves the current jobs available after reload', async ({ page }) => {
+  await openFreshDemo(page);
+  const incomplete = backupWithActiveJobs(2) as { jobs: Array<Record<string, unknown>> };
+  delete incomplete.jobs[1]!.updatedAt;
+  await page.getByRole('button', { name: 'Open data settings' }).first().click();
+  await page.getByLabel('Import JSON').setInputFiles({ name: 'incomplete.json', mimeType: 'application/json', buffer: importBuffer(incomplete) });
+  await expect(page.getByRole('alert')).toContainText('job 2 is missing a valid updated date');
+  await expect(page.getByRole('alert')).toContainText('current jobs were not changed');
+  await page.getByRole('button', { name: 'Close dialog' }).click();
+  await expect(page.getByRole('heading', { name: 'Mercer kitchen fit' })).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Mercer kitchen fit' })).toBeVisible();
+  await expect(page.getByText('Imported job 1')).toHaveCount(0);
+});
+
+test('an incomplete legacy record cannot hold a later app load on the loading screen', async ({ page }) => {
+  const incomplete = backupWithActiveJobs(2) as { jobs: Array<Record<string, unknown>> };
+  delete incomplete.jobs[0]!.updatedAt;
+  await page.evaluate(async (record) => new Promise<void>((resolve, reject) => {
+    const request = indexedDB.open('actuals-job-sequencer', 1);
+    request.onupgradeneeded = () => request.result.createObjectStore('app');
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => {
+      const transaction = request.result.transaction('app', 'readwrite');
+      transaction.objectStore('app').put(record, 'current');
+      transaction.oncomplete = () => { request.result.close(); resolve(); };
+      transaction.onerror = () => reject(transaction.error);
+    };
+  }), incomplete);
+  await page.reload();
+  await expect(page.getByRole('alert')).toContainText('Saved browser data is incomplete, so it was not opened');
+  await expect(page.getByRole('heading', { name: 'Move forecast dates after actual finishes' })).toBeVisible();
+  await expect(page.getByText('Loading your job sheet…')).toHaveCount(0);
 });
 
 test('@claim:json-backup JSON exports and restores every sample job field and calendar setting', async ({ page }) => {
@@ -216,6 +284,10 @@ test('@claim:five-job-limit five active jobs and exports work without an account
   await page.getByRole('button', { name: 'Start for real' }).click();
   await expect(page.getByText('Five active jobs. No account.')).toBeVisible();
   await expect(page.getByRole('link', { name: /Buy|checkout/i })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Open data settings' }).first().click();
+  await page.getByLabel('Timezone').fill('Asia/Kolkata');
+  await page.getByLabel('Non-working dates').fill('2026-10-02');
+  await page.getByRole('button', { name: 'Save working calendar' }).click();
   for (let index = 1; index <= 5; index += 1) {
     await page.getByRole('button', { name: index === 1 ? 'Start your first job' : 'Add a job' }).first().click();
     await page.getByLabel('Job name').fill(`Job ${index}`);
@@ -226,8 +298,25 @@ test('@claim:five-job-limit five active jobs and exports work without an account
   await page.getByRole('button', { name: 'Open data settings' }).first().click();
   const exportPromise = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Export CSV' }).click();
-  expect((await exportPromise).suggestedFilename()).toMatch(/\.csv$/);
+  const exportDownload = await exportPromise;
+  expect(exportDownload.suggestedFilename()).toMatch(/\.csv$/);
+  const rows = parseCsv(await readDownload(exportDownload));
+  expect(rows).toHaveLength(6);
+  expect(rows.slice(1).map((row) => row[0])).toEqual(['Job 1', 'Job 2', 'Job 3', 'Job 4', 'Job 5']);
+  for (const row of rows.slice(1)) {
+    expect(row.slice(3, 11)).toEqual(['', '', '', '', '', '', '', '']);
+    expect(row.slice(11)).toEqual(['Asia/Kolkata', 'Mon|Tue|Wed|Thu|Fri', '2026-10-02']);
+  }
+
+  await page.getByLabel('Import JSON').setInputFiles({ name: 'six-active.json', mimeType: 'application/json', buffer: importBuffer(backupWithActiveJobs(6)) });
+  await expect(page.getByRole('alert')).toContainText('more than five active jobs');
+  await expect(page.getByRole('alert')).toContainText('current jobs were not changed');
   await page.getByRole('button', { name: 'Close dialog' }).click();
+  await expect(page.locator('.rail-head')).toContainText('5/5');
+  await page.reload();
+  await expect(page.locator('.rail-head')).toContainText('5/5');
+  await expect(page.getByRole('button', { name: 'Job 1' })).toBeVisible();
+  await expect(page.getByText('Imported job 1')).toHaveCount(0);
   await page.getByRole('button', { name: 'Add a job' }).click();
   await expect(page.getByText('Five active jobs is the limit. Archive one to add another.')).toBeVisible();
 });
@@ -299,6 +388,15 @@ test('keyboard, mobile layout, dialogs, and all routes have no serious accessibi
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
     const results = await new AxeBuilder({ page }).analyze();
     expect(results.violations.filter((item) => ['serious', 'critical'].includes(item.impact || ''))).toEqual([]);
+    const navigationTargets = await page.locator('.site-nav a, .footer-links a').evaluateAll((links) => links.map((link) => {
+      const box = link.getBoundingClientRect();
+      return { label: link.textContent?.trim(), width: box.width, height: box.height };
+    }));
+    expect(navigationTargets.length).toBeGreaterThan(0);
+    for (const target of navigationTargets) {
+      expect(target.width, `${route} ${target.label} width`).toBeGreaterThanOrEqual(44);
+      expect(target.height, `${route} ${target.label} height`).toBeGreaterThanOrEqual(44);
+    }
   }
   await page.goto('/');
   await page.keyboard.press('Tab');
