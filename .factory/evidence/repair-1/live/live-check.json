@@ -1,0 +1,133 @@
+{
+  "errors": [],
+  "offOrigin": [],
+  "firstScreens": {
+    "phone": {
+      "title": "Actuals Job Sequencer — move forecast dates",
+      "h1": "Move forecast dates after actual finishes",
+      "audience": "For small trade crews when a late step changes the forecast dates you gave a client.",
+      "action": "Try it with sample data",
+      "h1Box": {
+        "top": 147,
+        "bottom": 227.46875
+      },
+      "audienceBox": {
+        "top": 241.46875,
+        "bottom": 320.640625
+      },
+      "actionBox": {
+        "top": 342.640625,
+        "bottom": 386.640625
+      },
+      "scrollY": 0,
+      "overflow": false,
+      "navigationTargets": [
+        {
+          "label": "Demo",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "Privacy",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "Terms",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "Privacy",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "Terms",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "View source code (GitHub) (opens in a new tab)",
+          "width": 152.6875,
+          "height": 44
+        }
+      ]
+    },
+    "desktop": {
+      "title": "Actuals Job Sequencer — move forecast dates",
+      "h1": "Move forecast dates after actual finishes",
+      "audience": "For small trade crews when a late step changes the forecast dates you gave a client.",
+      "action": "Try it with sample data",
+      "h1Box": {
+        "top": 142,
+        "bottom": 290.59375
+      },
+      "audienceBox": {
+        "top": 308.59375,
+        "bottom": 361.375
+      },
+      "actionBox": {
+        "top": 383.375,
+        "bottom": 427.375
+      },
+      "scrollY": 0,
+      "overflow": false,
+      "navigationTargets": [
+        {
+          "label": "Demo",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "Privacy",
+          "width": 47.828125,
+          "height": 44
+        },
+        {
+          "label": "Terms",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "Privacy",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "Terms",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "View source code (GitHub) (opens in a new tab)",
+          "width": 152.6875,
+          "height": 44
+        }
+      ]
+    }
+  },
+  "boundaries": {
+    "zeroStepCsv": true,
+    "incompleteRejected": true,
+    "sixActiveRejected": true,
+    "demoResetAndIsolation": true
+  },
+  "routes": {
+    "textResize": {
+      "overflow": false,
+      "headlineVisible": true,
+      "sampleActionVisible": true
+    },
+    "reducedMotionDuration": "1e-05s",
+    "notFoundStatus": 404,
+    "notFoundHeading": "This page is not on the job sheet"
+  },
+  "offline": {
+    "cacheKeys": [
+      "actuals-v4-shell",
+      "actuals-v4-runtime"
+    ],
+    "reloaded": true
+  }
+}
