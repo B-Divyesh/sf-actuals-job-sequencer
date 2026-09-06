@@ -1,0 +1,27 @@
+[
+  {
+    "path": "/",
+    "version": "4.13.0",
+    "violations": []
+  },
+  {
+    "path": "/demo/",
+    "version": "4.13.0",
+    "violations": []
+  },
+  {
+    "path": "/privacy/",
+    "version": "4.13.0",
+    "violations": []
+  },
+  {
+    "path": "/terms/",
+    "version": "4.13.0",
+    "violations": []
+  },
+  {
+    "path": "/404/",
+    "version": "4.13.0",
+    "violations": []
+  }
+]

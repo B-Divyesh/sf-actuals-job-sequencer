@@ -1,0 +1,17 @@
+{
+  "update": {
+    "toast": true,
+    "reload": true,
+    "caches": [
+      "actuals-v3-shell",
+      "actuals-v3-runtime"
+    ],
+    "controller": true
+  },
+  "history": {
+    "pushFocus": true,
+    "backFocus": true,
+    "forwardFocus": true,
+    "title": "Privacy — Actuals Job Sequencer"
+  }
+}

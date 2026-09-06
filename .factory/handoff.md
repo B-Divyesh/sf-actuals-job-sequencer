@@ -1,15 +1,15 @@
-# Review 3 handoff — Actuals Job Sequencer
+# Review 4 handoff — Actuals Job Sequencer
 
 ## Outcome
 
-Independent adversarial review 3 is **PASS**. No product code changed. The full report is in `.factory/review-3.md`.
+Independent review 4 is **FAIL** with four findings: three blocking and one minor. Two public claims are incompletely tested. No product code changed. The full report is in `.factory/review-4.md`.
 
 ## Verification
 
-- Fresh clone: `npm ci`, all nine exact claim commands from `.factory/claims.json`, `npm test`, `npm run build`, and `npm run test:e2e` passed. The browser suite is 12/12 and the unit suite is 11/11.
-- Cold live checks at 390px and desktop verified the job, audience, and one-click sample action before scrolling.
-- Live demo verified its seeded Mercer kitchen job, banner, reset, exit, same-origin-only request flow, and real/demo IndexedDB separation. The offline claim reloads the demo successfully after service-worker control and network disablement.
-- Live routes (`/`, `/demo/`, `/privacy/`, `/terms/`, `/404/`, and an unknown URL), metadata, h1/main structure, history focus, links, cache headers, and 404 status were checked. Live axe scans found no serious or critical issues.
+- Clean clone: `npm ci`, all nine exact claim commands, `npm test`, `npm run build`, `npm run check`, and `npm run test:e2e` passed. The browser suite is 12/12 and the unit suite is 11/11.
+- The live site is byte-for-byte equal to the build from implementation `1b06d2a`; the current documentation commit is `f6b3449`.
+- Cold phone and desktop checks verified the job, audience, and sample action before scrolling. Demo isolation, reset, exit, offline reload, routes, focus, privacy, legal pages, deliberate 404, reduced motion, axe, and Lighthouse checks pass.
+- Live boundary checks found that incomplete JSON can prevent later loads, import accepts six active jobs, and CSV drops jobs with no steps. Header and footer navigation also has targets below 44 by 44 pixels.
 
 ## Run
 
@@ -23,4 +23,7 @@ Build output is `dist/`.
 
 ## Known gaps
 
-None found in this review. The product intentionally has no AI or sync feature because deterministic, offline local scheduling is the brief’s scope.
+- Reject incomplete backup records before saving them and add a reload recovery test.
+- Reject imports containing more than five active jobs and extend `@claim:five-job-limit` to cover import.
+- Include zero-step jobs and calendar data in CSV, then assert that boundary in the claim suite.
+- Increase header and footer navigation hit areas to at least 44 by 44 CSS pixels.

@@ -1,0 +1,15 @@
+{
+  "after": {
+    "errors": [],
+    "body": "Skip to sample schedule\nA→\nActuals Job Sequencer\nDemo\nPrivacy\nTerms\nDemo — sample data, nothing is saved\nChanges stay apart from your jobs.\nReset demo\nStart for real\n\nSAMPLE JOB · LATE ROUGH-IN\n\nMove forecast dates after actual finishes\n\nSee the moved handover date and the client update below.\n\nSAVED IN THIS BROWSER\nOpen data settings\nYour jobs\n1/5\nShow active jobs\nShow archived jobs\nMercer kitchen fit\n2/3 ACTUAL · RINA MERCER\nAdd a job\nOpen data settings\n\nJOB 01 · ACTIVE\n\nMercer kitchen fit\n\nRina Mercer · starts Mon, Sep 7, 2026 · Europe/London\n\nEdit job\nArchive job\n\nForecast notice: Forecast dates use your estimates, calendar, and actual finishes. They are not guaranteed appointments.\n\nNO.",
+    "storedJobs": 2
+  },
+  "reload": {
+    "errors": [
+      "Cannot read properties of undefined (reading 'localeCompare')"
+    ],
+    "body": "Skip to sample schedule\nMove forecast dates after actual finishes\n\nLoading the sample job…",
+    "h1": 1,
+    "main": 1
+  }
+}

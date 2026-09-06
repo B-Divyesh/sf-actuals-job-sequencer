@@ -1,0 +1,14 @@
+{
+  "zeroStepCsv": {
+    "filename": "actuals-jobs-2026-09-06.csv",
+    "csv": "\"job\",\"client\",\"status\",\"step_order\",\"step\",\"duration_workdays\",\"baseline_start\",\"baseline_finish\",\"forecast_start\",\"forecast_finish\",\"actual_finish\",\"timezone\",\"working_days\",\"holidays\"",
+    "containsJob": false,
+    "lineCount": 1
+  },
+  "sixJobImport": {
+    "counter": "Your jobs\n6/5",
+    "visibleJobs": 6,
+    "toast": "JSON backup imported.",
+    "firstHeading": true
+  }
+}

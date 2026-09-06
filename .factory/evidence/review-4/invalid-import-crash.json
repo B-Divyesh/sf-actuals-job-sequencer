@@ -1,0 +1,40 @@
+{
+  "afterImport": {
+    "pageErrors": [],
+    "body": "Skip to sample schedule\nA→\nActuals Job Sequencer\nDemo\nPrivacy\nTerms\nDemo — sample data, nothing is saved\nChanges stay apart from your jobs.\nReset demo\nStart for real\n\nSAMPLE JOB · LATE ROUGH-IN\n\nMove forecast dates after actual finishes\n\nSee the moved handover date and the client update below.\n\nSAVED IN THIS BROWSER\nOpen data settings\nYour jobs\n1/5\nShow active jobs\nShow archived jobs\nMissing update time\n0/0 ACTUAL · NO CLIENT\nAdd a job\nOpen data settings\n\nJOB 01 · ACTIVE\n\nMissing update time\n\nNo client name · starts Mon, Sep 7, 2026 · Europe/London\n\nEdit job\nArchive job\n\nForecast notice: Forecast dates use your estimates, calendar, and actual finishes. They are not guaranteed appointments.\n\nNO.\nSTEP\nORIGINAL FORECAST\nCURRENT FORECAST\nACTIONS\n\nNo steps yet. Add the first piece of work to start the sequence.\n\nAdd next step\nClient update\n\nNo forecast dates changed.\nRecord an actual finish. Later unfinished steps will move when that date differs from the estimate.\n\nChange notes\n\nActual finishes and step changes will appear here.\n\nHow it works\nAdd the ordered steps.\nGive each step a working-day estimate.\nRecord the actual finish.\nThe next forecast starts after the work finished.\nSend th",
+    "dialogOpen": 0,
+    "stored": {
+      "version": 1,
+      "settings": {
+        "timezone": "Europe/London",
+        "workdays": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "holidays": []
+      },
+      "jobs": [
+        {
+          "id": "bad",
+          "name": "Missing update time",
+          "client": "",
+          "startDate": "2026-09-07",
+          "status": "active",
+          "createdAt": "2026-09-01T00:00:00.000Z",
+          "steps": [],
+          "history": []
+        }
+      ],
+      "selectedJobId": "bad"
+    }
+  },
+  "afterReload": {
+    "pageErrors": [],
+    "body": "Skip to sample schedule\nA→\nActuals Job Sequencer\nDemo\nPrivacy\nTerms\nDemo — sample data, nothing is saved\nChanges stay apart from your jobs.\nReset demo\nStart for real\n\nSAMPLE JOB · LATE ROUGH-IN\n\nMove forecast dates after actual finishes\n\nSee the moved handover date and the client update below.\n\nSAVED IN THIS BROWSER\nOpen data settings\nYour jobs\n1/5\nShow active jobs\nShow archived jobs\nMissing update time\n0/0 ACTUAL · NO CLIENT\nAdd a job\nOpen data settings\n\nJOB 01 · ACTIVE\n\nMissing update time\n\nNo client name · starts Mon, Sep 7, 2026 · Europe/London\n\nEdit job\nArchive job\n\nForecast notice: Forecast dates use your estimates, calendar, and actual finishes. They are not guaranteed appointments.\n\nNO.\nSTEP\nORIGINAL FORECAST\nCURRENT FORECAST\nACTIONS\n\nNo steps yet. Add the first piece of work to start the sequence.\n\nAdd next step\nClient update\n\nNo forecast dates changed.\nRecord an actual finish. Later unfinished steps will move when that date differs from the estimate.\n\nChange notes\n\nActual fin",
+    "h1": 1,
+    "main": 1
+  }
+}

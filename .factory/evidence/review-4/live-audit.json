@@ -1,0 +1,368 @@
+{
+  "desktop": {
+    "scrollY": 0,
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "text": [
+      {
+        "text": "Move forecast dates after actual finishes",
+        "visible": true,
+        "top": 142,
+        "bottom": 290.59375
+      },
+      {
+        "text": "For small trade crews when a late step changes the forecast dates you gave a client.",
+        "visible": true,
+        "top": 308.59375,
+        "bottom": 361.375
+      },
+      {
+        "text": "Try it with sample data",
+        "visible": true,
+        "top": 383.375,
+        "bottom": 427.375
+      }
+    ],
+    "title": "Actuals Job Sequencer — move forecast dates",
+    "h1": 1,
+    "main": 1,
+    "demoIsolation": {
+      "realHidden": false,
+      "resetRestored": false,
+      "bannerAfterReset": true,
+      "realRestored": false,
+      "dbAfterExit": [
+        "actuals-job-sequencer"
+      ]
+    },
+    "keyboard": {
+      "skipFocused": true,
+      "focusStyle": {
+        "outline": "rgb(157, 46, 34) solid 3px",
+        "offset": "3px"
+      },
+      "mainFocused": true,
+      "dialogInitialFocus": true,
+      "dialogReturnFocus": true
+    }
+  },
+  "phone": {
+    "firstScreen": {
+      "scrollY": 0,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "overflow": 0,
+      "text": [
+        {
+          "text": "Move forecast dates after actual finishes",
+          "visible": true,
+          "top": 147,
+          "bottom": 227.46875
+        },
+        {
+          "text": "For small trade crews when a late step changes the forecast dates you gave a client.",
+          "visible": true,
+          "top": 241.46875,
+          "bottom": 320.640625
+        },
+        {
+          "text": "Try it with sample data",
+          "visible": true,
+          "top": 342.640625,
+          "bottom": 386.640625
+        }
+      ],
+      "facts": [
+        {
+          "text": "Works offline after the first visit.",
+          "bottom": 532.40625,
+          "visible": true
+        },
+        {
+          "text": "Jobs stay in this browser.",
+          "bottom": 571.015625,
+          "visible": true
+        },
+        {
+          "text": "Five active jobs. No account.",
+          "bottom": 609.625,
+          "visible": true
+        }
+      ]
+    },
+    "demo": {
+      "title": "Demo — Actuals Job Sequencer",
+      "banner": true,
+      "sampleHeading": true,
+      "handoverText": "03\nFit and handover\n2 WORKING DAYS\nORIGINAL FORECAST\nSep 11, 2026 – Sep 14, 2026\nCURRENT FORECAST\nSep 11, 2026 – Sep 14, 2026\nSep 16, 2026 – Sep 17, 2026\nMOVED\n↑\n•••",
+      "clientUpdate": "Hello Rina Mercer — a forecast date update for Mercer kitchen fit.\n\n• Fit and handover: Sep 11, 2026 → Sep 16, 2026; finish Sep 17, 2026\n\nCurrent forecast job finish: Thu, Sep 17, 2026. These forecast dates use current estimates and working days. Please reply if you need to talk it through.",
+      "demoDbs": [
+        "actuals-job-sequencer",
+        "demo:actuals-job-sequencer"
+      ],
+      "bannerStillPresentAfterScroll": true
+    },
+    "validation": {
+      "maxAccepted": true,
+      "overMaxError": "Enter a step name and 1 to 120 working days.",
+      "noDaysError": "Choose at least one working day.",
+      "badZoneError": "Enter a valid timezone, such as Europe/London.",
+      "badDateError": "“2026-02-30” is not a valid YYYY-MM-DD date.",
+      "recoveredSettings": false,
+      "badImportError": "Expected property name or '}' in JSON at position 1 (line 1 column 2)",
+      "jobSurvivesBadImport": true
+    },
+    "offline": {
+      "title": "Demo — Actuals Job Sequencer",
+      "sample": true,
+      "state": true
+    }
+  },
+  "routes": [
+    {
+      "path": "/",
+      "title": "Actuals Job Sequencer — move forecast dates",
+      "lang": "en",
+      "h1": 1,
+      "main": 1,
+      "canonical": "https://actuals-job-sequencer.sociobot.in/",
+      "description": "Move forecast dates after an actual finish. Built for small trade crews and works offline after the first visit.",
+      "ogImage": "https://actuals-job-sequencer.sociobot.in/og-image.webp",
+      "overflow": 0,
+      "links": [
+        "https://actuals-job-sequencer.sociobot.in/#main",
+        "https://actuals-job-sequencer.sociobot.in/",
+        "https://actuals-job-sequencer.sociobot.in/demo/",
+        "https://actuals-job-sequencer.sociobot.in/privacy/",
+        "https://actuals-job-sequencer.sociobot.in/terms/",
+        "https://actuals-job-sequencer.sociobot.in/demo/",
+        "https://actuals-job-sequencer.sociobot.in/privacy/",
+        "https://actuals-job-sequencer.sociobot.in/terms/",
+        "https://github.com/B-Divyesh/sf-actuals-job-sequencer"
+      ]
+    },
+    {
+      "path": "/demo/",
+      "title": "Demo — Actuals Job Sequencer",
+      "lang": "en",
+      "h1": 1,
+      "main": 1,
+      "canonical": "https://actuals-job-sequencer.sociobot.in/demo/",
+      "description": "Try a sample job without changing your jobs. See a late actual finish move later forecast dates.",
+      "ogImage": "https://actuals-job-sequencer.sociobot.in/og-image.webp",
+      "overflow": 0,
+      "links": [
+        "https://actuals-job-sequencer.sociobot.in/demo/#main",
+        "https://actuals-job-sequencer.sociobot.in/",
+        "https://actuals-job-sequencer.sociobot.in/demo/",
+        "https://actuals-job-sequencer.sociobot.in/privacy/",
+        "https://actuals-job-sequencer.sociobot.in/terms/",
+        "https://actuals-job-sequencer.sociobot.in/privacy/",
+        "https://actuals-job-sequencer.sociobot.in/terms/",
+        "https://github.com/B-Divyesh/sf-actuals-job-sequencer"
+      ]
+    },
+    {
+      "path": "/privacy/",
+      "title": "Privacy — Actuals Job Sequencer",
+      "lang": "en",
+      "h1": 1,
+      "main": 1,
+      "canonical": "https://actuals-job-sequencer.sociobot.in/privacy/",
+      "description": "How Actuals Job Sequencer keeps job data in your browser.",
+      "ogImage": "https://actuals-job-sequencer.sociobot.in/og-image.webp",
+      "overflow": 0,
+      "links": [
+        "https://actuals-job-sequencer.sociobot.in/privacy/#main",
+        "https://actuals-job-sequencer.sociobot.in/",
+        "https://actuals-job-sequencer.sociobot.in/demo/",
+        "https://actuals-job-sequencer.sociobot.in/privacy/",
+        "https://actuals-job-sequencer.sociobot.in/terms/",
+        "mailto:privacy@sociobot.in",
+        "https://actuals-job-sequencer.sociobot.in/privacy/",
+        "https://actuals-job-sequencer.sociobot.in/terms/",
+        "https://github.com/B-Divyesh/sf-actuals-job-sequencer"
+      ]
+    },
+    {
+      "path": "/terms/",
+      "title": "Terms — Actuals Job Sequencer",
+      "lang": "en",
+      "h1": 1,
+      "main": 1,
+      "canonical": "https://actuals-job-sequencer.sociobot.in/terms/",
+      "description": "Terms for using Actuals Job Sequencer and its forecast dates.",
+      "ogImage": "https://actuals-job-sequencer.sociobot.in/og-image.webp",
+      "overflow": 0,
+      "links": [
+        "https://actuals-job-sequencer.sociobot.in/terms/#main",
+        "https://actuals-job-sequencer.sociobot.in/",
+        "https://actuals-job-sequencer.sociobot.in/demo/",
+        "https://actuals-job-sequencer.sociobot.in/privacy/",
+        "https://actuals-job-sequencer.sociobot.in/terms/",
+        "mailto:support@sociobot.in",
+        "https://actuals-job-sequencer.sociobot.in/privacy/",
+        "https://actuals-job-sequencer.sociobot.in/terms/",
+        "https://github.com/B-Divyesh/sf-actuals-job-sequencer"
+      ]
+    },
+    {
+      "path": "/404/",
+      "title": "Page not found — Actuals Job Sequencer",
+      "lang": "en",
+      "h1": 1,
+      "main": 1,
+      "canonical": "https://actuals-job-sequencer.sociobot.in/404/",
+      "description": "This job-sheet page could not be found.",
+      "ogImage": "https://actuals-job-sequencer.sociobot.in/og-image.webp",
+      "overflow": 0,
+      "links": [
+        "https://actuals-job-sequencer.sociobot.in/404/#main",
+        "https://actuals-job-sequencer.sociobot.in/",
+        "https://actuals-job-sequencer.sociobot.in/demo/",
+        "https://actuals-job-sequencer.sociobot.in/privacy/",
+        "https://actuals-job-sequencer.sociobot.in/terms/",
+        "https://actuals-job-sequencer.sociobot.in/",
+        "https://actuals-job-sequencer.sociobot.in/privacy/",
+        "https://actuals-job-sequencer.sociobot.in/terms/",
+        "https://github.com/B-Divyesh/sf-actuals-job-sequencer"
+      ]
+    }
+  ],
+  "accessibility": [
+    {
+      "path": "/",
+      "violations": 0,
+      "seriousCritical": []
+    },
+    {
+      "path": "/demo/",
+      "violations": 0,
+      "seriousCritical": []
+    },
+    {
+      "path": "/privacy/",
+      "violations": 0,
+      "seriousCritical": []
+    },
+    {
+      "path": "/terms/",
+      "violations": 0,
+      "seriousCritical": []
+    },
+    {
+      "path": "/404/",
+      "violations": 0,
+      "seriousCritical": []
+    }
+  ],
+  "errors": [],
+  "requests": [
+    "https://actuals-job-sequencer.sociobot.in/",
+    "https://actuals-job-sequencer.sociobot.in/assets/dependency-still-life-1200.webp",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-BX2gFJab.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-mUGnW-zO.css",
+    "https://actuals-job-sequencer.sociobot.in/",
+    "https://actuals-job-sequencer.sociobot.in/assets/dependency-still-life-1200.webp",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-BX2gFJab.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-mUGnW-zO.css",
+    "https://actuals-job-sequencer.sociobot.in/",
+    "https://actuals-job-sequencer.sociobot.in/assets/dependency-still-life-1200.webp",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-BX2gFJab.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-mUGnW-zO.css",
+    "https://actuals-job-sequencer.sociobot.in/assets/dependency-still-life-720.webp",
+    "https://actuals-job-sequencer.sociobot.in/demo/",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-BX2gFJab.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-mUGnW-zO.css",
+    "https://actuals-job-sequencer.sociobot.in/demo/",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-BX2gFJab.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-mUGnW-zO.css",
+    "https://actuals-job-sequencer.sociobot.in/",
+    "https://actuals-job-sequencer.sociobot.in/assets/dependency-still-life-720.webp",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-BX2gFJab.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-mUGnW-zO.css",
+    "https://actuals-job-sequencer.sociobot.in/",
+    "https://actuals-job-sequencer.sociobot.in/assets/dependency-still-life-720.webp",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-BX2gFJab.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-mUGnW-zO.css",
+    "https://actuals-job-sequencer.sociobot.in/demo/",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-BX2gFJab.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-mUGnW-zO.css",
+    "https://actuals-job-sequencer.sociobot.in/privacy/",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-BX2gFJab.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-mUGnW-zO.css",
+    "https://actuals-job-sequencer.sociobot.in/terms/",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-BX2gFJab.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-mUGnW-zO.css",
+    "https://actuals-job-sequencer.sociobot.in/404/",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-BX2gFJab.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-mUGnW-zO.css",
+    "https://actuals-job-sequencer.sociobot.in/",
+    "https://actuals-job-sequencer.sociobot.in/assets/dependency-still-life-720.webp",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-BX2gFJab.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-mUGnW-zO.css"
+  ],
+  "notFound": {
+    "status": 404,
+    "bodyHasReturn": false
+  },
+  "reducedMotion": {
+    "matches": true,
+    "transition": "1e-05s",
+    "animation": "1e-05s"
+  },
+  "zoom200": {
+    "overflow": 0,
+    "h1Visible": true,
+    "primaryVisible": true,
+    "bodyHeight": 4158
+  },
+  "links": {
+    "sameOrigin": [
+      {
+        "href": "https://actuals-job-sequencer.sociobot.in/#main",
+        "status": 200
+      },
+      {
+        "href": "https://actuals-job-sequencer.sociobot.in/",
+        "status": 200
+      },
+      {
+        "href": "https://actuals-job-sequencer.sociobot.in/demo/",
+        "status": 200
+      },
+      {
+        "href": "https://actuals-job-sequencer.sociobot.in/privacy/",
+        "status": 200
+      },
+      {
+        "href": "https://actuals-job-sequencer.sociobot.in/terms/",
+        "status": 200
+      },
+      {
+        "href": "https://actuals-job-sequencer.sociobot.in/demo/#main",
+        "status": 200
+      },
+      {
+        "href": "https://actuals-job-sequencer.sociobot.in/privacy/#main",
+        "status": 200
+      },
+      {
+        "href": "https://actuals-job-sequencer.sociobot.in/terms/#main",
+        "status": 200
+      },
+      {
+        "href": "https://actuals-job-sequencer.sociobot.in/404/#main",
+        "status": 200
+      }
+    ],
+    "sourceStatus": 200,
+    "privacyMailto": true,
+    "supportMailto": true
+  },
+  "offOriginRequests": []
+}

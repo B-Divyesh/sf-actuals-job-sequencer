@@ -1,0 +1,29 @@
+{
+  "demoEntry": {
+    "url": "https://actuals-job-sequencer.sociobot.in/demo/",
+    "title": "Demo — Actuals Job Sequencer",
+    "realHidden": true,
+    "banner": true
+  },
+  "reset": {
+    "sampleRestored": true,
+    "banner": true
+  },
+  "exit": {
+    "url": "https://actuals-job-sequencer.sociobot.in/",
+    "realRestored": true,
+    "sampleAbsent": true,
+    "databases": [
+      "actuals-job-sequencer"
+    ]
+  },
+  "directDemo": {
+    "databases": [
+      "demo:actuals-job-sequencer"
+    ]
+  },
+  "validationRecovery": {
+    "saved": true,
+    "sampleStillPresent": true
+  }
+}
