@@ -210,7 +210,7 @@ dialog::backdrop { background: rgb(23 23 19 / 58%); backdrop-filter: blur(2px); 
 
 @media (max-width: 480px) {
   .site-header { border-top-width: 7px; }
-  .masthead { align-items: flex-start; }
+  .masthead { align-items: flex-start; flex-wrap: wrap; }
   .wordmark { max-width: 140px; font-size: .92rem; }
   .site-nav { gap: 12px; }
   .site-nav a { font-size: .75rem; }

@@ -399,6 +399,11 @@ test('keyboard, mobile layout, dialogs, and all routes have no serious accessibi
     }
   }
   await page.goto('/');
+  await page.evaluate(() => { document.documentElement.style.fontSize = '200%'; });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+  await expect(page.getByRole('heading', { name: 'Move forecast dates after actual finishes' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Try it with sample data' })).toBeVisible();
+  await page.goto('/');
   await page.keyboard.press('Tab');
   await expect(page.getByRole('link', { name: 'Skip to job schedule' })).toBeFocused();
   await page.keyboard.press('Enter');
