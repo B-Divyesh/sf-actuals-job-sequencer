@@ -1,0 +1,376 @@
+{
+  "checkedAt": "2026-09-06T04:24:03.146Z",
+  "firstScreens": {
+    "phone": {
+      "title": "Actuals Job Sequencer — move forecast dates",
+      "h1": "Move forecast dates after actual finishes",
+      "audience": "For small trade crews when a late step changes the forecast dates you gave a client.",
+      "action": "Try it with sample data",
+      "resultHint": "See a late rough-in move the handover date.",
+      "facts": [
+        "Works offline after the first visit.",
+        "Jobs stay in this browser.",
+        "Five active jobs. No account."
+      ],
+      "h1Box": {
+        "top": 147,
+        "bottom": 227.46875,
+        "width": 350,
+        "height": 80.46875,
+        "beforeScroll": true
+      },
+      "audienceBox": {
+        "top": 241.46875,
+        "bottom": 320.640625,
+        "width": 350,
+        "height": 79.171875,
+        "beforeScroll": true
+      },
+      "actionBox": {
+        "top": 342.640625,
+        "bottom": 386.640625,
+        "width": 350,
+        "height": 44,
+        "beforeScroll": true
+      },
+      "scrollY": 0,
+      "overflow": false,
+      "htmlLang": "en",
+      "h1Count": 1,
+      "mainCount": 1,
+      "navTargets": [
+        {
+          "text": "Demo",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "text": "Privacy",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "text": "Terms",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "text": "Privacy",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "text": "Terms",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "text": "View source code (GitHub) (opens in a new tab)",
+          "width": 152.6875,
+          "height": 44
+        }
+      ]
+    },
+    "desktop": {
+      "title": "Actuals Job Sequencer — move forecast dates",
+      "h1": "Move forecast dates after actual finishes",
+      "audience": "For small trade crews when a late step changes the forecast dates you gave a client.",
+      "action": "Try it with sample data",
+      "resultHint": "See a late rough-in move the handover date.",
+      "facts": [
+        "Works offline after the first visit.",
+        "Jobs stay in this browser.",
+        "Five active jobs. No account."
+      ],
+      "h1Box": {
+        "top": 142,
+        "bottom": 290.59375,
+        "width": 820,
+        "height": 148.59375,
+        "beforeScroll": true
+      },
+      "audienceBox": {
+        "top": 308.59375,
+        "bottom": 361.375,
+        "width": 567.515625,
+        "height": 52.78125,
+        "beforeScroll": true
+      },
+      "actionBox": {
+        "top": 383.375,
+        "bottom": 427.375,
+        "width": 177.484375,
+        "height": 44,
+        "beforeScroll": true
+      },
+      "scrollY": 0,
+      "overflow": false,
+      "htmlLang": "en",
+      "h1Count": 1,
+      "mainCount": 1,
+      "navTargets": [
+        {
+          "text": "Demo",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "text": "Privacy",
+          "width": 47.828125,
+          "height": 44
+        },
+        {
+          "text": "Terms",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "text": "Privacy",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "text": "Terms",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "text": "View source code (GitHub) (opens in a new tab)",
+          "width": 152.6875,
+          "height": 44
+        }
+      ]
+    }
+  },
+  "demo": {
+    "job": "Mercer kitchen fit",
+    "client": "Rina Mercer · starts Mon, Sep 7, 2026 · Europe/London",
+    "handover": "03\nFit and handover\n2 WORKING DAYS\nORIGINAL FORECAST\nSep 11, 2026 – Sep 14, 2026\nCURRENT FORECAST\nSep 11, 2026 – Sep 14, 2026\nSep 16, 2026 – Sep 17, 2026\nMOVED\n↑\n•••",
+    "update": "Hello Rina Mercer — a forecast date update for Mercer kitchen fit.\n\n• Fit and handover: Sep 11, 2026 → Sep 16, 2026; finish Sep 17, 2026\n\nCurrent forecast job finish: Thu, Sep 17, 2026. These forecast dates use current estimates and working days. Please reply if you need to talk it through.",
+    "banner": "Demo — sample data, nothing is saved",
+    "reset": true,
+    "realJobUnchanged": true
+  },
+  "boundaries": {
+    "zeroStepCsv": true,
+    "malformedMessage": "Expected property name or '}' in JSON at position 1 (line 1 column 2)",
+    "malformedRejected": true,
+    "incompleteRejected": true,
+    "sixActiveRejected": true,
+    "recoveryAfterReload": true,
+    "duration120Accepted": true,
+    "duration121Rejected": true,
+    "emptyWorkdaysRejected": true,
+    "invalidTimezoneRejected": true,
+    "corruptStorageRecovered": true
+  },
+  "accessibility": {
+    "/": {
+      "violations": 0,
+      "seriousCritical": 0
+    },
+    "/demo/": {
+      "violations": 0,
+      "seriousCritical": 0
+    },
+    "/privacy/": {
+      "violations": 0,
+      "seriousCritical": 0
+    },
+    "/terms/": {
+      "violations": 0,
+      "seriousCritical": 0
+    },
+    "/404/": {
+      "violations": 0,
+      "seriousCritical": 0
+    },
+    "keyboard": true,
+    "reducedMotionDuration": "1e-05s",
+    "text200": {
+      "overflow": false,
+      "headline": true,
+      "sampleAction": true
+    }
+  },
+  "routes": {
+    "notFound": {
+      "status": 404,
+      "title": "Page not found — Actuals Job Sequencer",
+      "h1": "This page is not on the job sheet",
+      "returnLink": "/"
+    },
+    "links": [
+      {
+        "href": "https://actuals-job-sequencer.sociobot.in/#main",
+        "status": 200
+      },
+      {
+        "href": "https://actuals-job-sequencer.sociobot.in/",
+        "status": 200
+      },
+      {
+        "href": "https://actuals-job-sequencer.sociobot.in/demo/",
+        "status": 200
+      },
+      {
+        "href": "https://actuals-job-sequencer.sociobot.in/privacy/",
+        "status": 200
+      },
+      {
+        "href": "https://actuals-job-sequencer.sociobot.in/terms/",
+        "status": 200
+      },
+      {
+        "href": "https://github.com/B-Divyesh/sf-actuals-job-sequencer",
+        "status": 200
+      },
+      {
+        "href": "https://actuals-job-sequencer.sociobot.in/demo/#main",
+        "status": 200
+      },
+      {
+        "href": "https://actuals-job-sequencer.sociobot.in/privacy/#main",
+        "status": 200
+      },
+      {
+        "href": "mailto:privacy@sociobot.in",
+        "status": "mailto"
+      },
+      {
+        "href": "https://actuals-job-sequencer.sociobot.in/terms/#main",
+        "status": 200
+      },
+      {
+        "href": "mailto:support@sociobot.in",
+        "status": "mailto"
+      }
+    ]
+  },
+  "offline": {
+    "cacheKeys": [
+      "actuals-v4-shell",
+      "actuals-v4-runtime"
+    ],
+    "manifest": {
+      "id": "/",
+      "name": "Actuals Job Sequencer",
+      "short_name": "Actuals",
+      "description": "Move forecast dates when prior steps actually finish.",
+      "start_url": "/?source=installed&v=4",
+      "scope": "/",
+      "display": "standalone",
+      "background_color": "#f1eee6",
+      "theme_color": "#f1eee6",
+      "orientation": "any",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        },
+        {
+          "src": "/icon-512.png",
+          "sizes": "512x512",
+          "type": "image/png"
+        },
+        {
+          "src": "/icon-maskable-512.png",
+          "sizes": "512x512",
+          "type": "image/png",
+          "purpose": "maskable"
+        }
+      ]
+    },
+    "reload": true
+  },
+  "requests": [
+    "https://actuals-job-sequencer.sociobot.in/",
+    "https://actuals-job-sequencer.sociobot.in/assets/dependency-still-life-720.webp",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-CwEZCX0D.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-DIszmgTV.css",
+    "https://actuals-job-sequencer.sociobot.in/",
+    "https://actuals-job-sequencer.sociobot.in/assets/dependency-still-life-1200.webp",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-CwEZCX0D.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-DIszmgTV.css",
+    "https://actuals-job-sequencer.sociobot.in/",
+    "https://actuals-job-sequencer.sociobot.in/assets/dependency-still-life-720.webp",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-CwEZCX0D.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-DIszmgTV.css",
+    "https://actuals-job-sequencer.sociobot.in/demo/",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-CwEZCX0D.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-DIszmgTV.css",
+    "https://actuals-job-sequencer.sociobot.in/demo/",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-CwEZCX0D.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-DIszmgTV.css",
+    "https://actuals-job-sequencer.sociobot.in/",
+    "https://actuals-job-sequencer.sociobot.in/assets/dependency-still-life-720.webp",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-CwEZCX0D.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-DIszmgTV.css",
+    "https://actuals-job-sequencer.sociobot.in/",
+    "https://actuals-job-sequencer.sociobot.in/assets/dependency-still-life-720.webp",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-CwEZCX0D.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-DIszmgTV.css",
+    "https://actuals-job-sequencer.sociobot.in/",
+    "https://actuals-job-sequencer.sociobot.in/assets/dependency-still-life-720.webp",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-CwEZCX0D.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-DIszmgTV.css",
+    "https://actuals-job-sequencer.sociobot.in/demo/",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-CwEZCX0D.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-DIszmgTV.css",
+    "https://actuals-job-sequencer.sociobot.in/privacy/",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-CwEZCX0D.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-DIszmgTV.css",
+    "https://actuals-job-sequencer.sociobot.in/terms/",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-CwEZCX0D.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-DIszmgTV.css",
+    "https://actuals-job-sequencer.sociobot.in/404/",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-CwEZCX0D.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-DIszmgTV.css",
+    "https://actuals-job-sequencer.sociobot.in/",
+    "https://actuals-job-sequencer.sociobot.in/assets/dependency-still-life-720.webp",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-CwEZCX0D.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-DIszmgTV.css",
+    "https://actuals-job-sequencer.sociobot.in/",
+    "https://actuals-job-sequencer.sociobot.in/assets/dependency-still-life-720.webp",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-CwEZCX0D.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-DIszmgTV.css",
+    "https://actuals-job-sequencer.sociobot.in/demo/",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-CwEZCX0D.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-DIszmgTV.css",
+    "https://actuals-job-sequencer.sociobot.in/demo/",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-CwEZCX0D.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-DIszmgTV.css",
+    "https://actuals-job-sequencer.sociobot.in/manifest.webmanifest",
+    "https://actuals-job-sequencer.sociobot.in/demo/",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-CwEZCX0D.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-DIszmgTV.css",
+    "https://actuals-job-sequencer.sociobot.in/",
+    "https://actuals-job-sequencer.sociobot.in/assets/dependency-still-life-1200.webp",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-CwEZCX0D.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-DIszmgTV.css",
+    "https://actuals-job-sequencer.sociobot.in/demo/",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-CwEZCX0D.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-DIszmgTV.css",
+    "https://actuals-job-sequencer.sociobot.in/privacy/",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-CwEZCX0D.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-DIszmgTV.css",
+    "https://actuals-job-sequencer.sociobot.in/terms/",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-CwEZCX0D.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-DIszmgTV.css",
+    "https://actuals-job-sequencer.sociobot.in/verification-2-deliberate-missing-page",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-CwEZCX0D.js",
+    "https://actuals-job-sequencer.sociobot.in/assets/main-DIszmgTV.css"
+  ],
+  "consoleErrors": [
+    "routes: Failed to load resource: the server responded with a status of 404 ()"
+  ],
+  "pageErrors": [],
+  "privacy": {
+    "offOriginRequests": []
+  },
+  "expected404ConsoleMessages": [
+    "routes: Failed to load resource: the server responded with a status of 404 ()"
+  ],
+  "unexpectedConsoleErrors": []
+}
